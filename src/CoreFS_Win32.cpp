@@ -79,7 +79,7 @@ std::string CoreFS::CurrentDirectory()
     return cwd;
 }
 
-//Defined at: CoreFS.cpp
+//  Defined at: CoreFS.cpp
 //std::string NewLine()
 
 std::string CoreFS::SystemDirectory()
@@ -96,56 +96,56 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
     //  https://msdn.microsoft.com/en-us/library/windows/desktop/dd378457(v=vs.85).aspx
     GUID folder_guid;
 
-    //COWTODO: Finish Implementation.
+    //COWTODO: Recheck the values with the provided by dot net, both on x86 and x64.
     switch(folder)
     {
-        case CoreFS::SpecialFolder::AdminTools             : folder_guid = FOLDERID_AdminTools;       break;
-        case CoreFS::SpecialFolder::ApplicationData        : /*folder_guid = ;*/ break;
-        case CoreFS::SpecialFolder::CDBurning              : folder_guid = FOLDERID_CDBurning;        break;
-        case CoreFS::SpecialFolder::CommonAdminTools       : folder_guid = FOLDERID_CommonAdminTools; break;
-        case CoreFS::SpecialFolder::CommonApplicationData  : /*folder_guid = ;*/ break;
-        case CoreFS::SpecialFolder::CommonDesktopDirectory : folder_guid = FOLDERID_PublicDesktop;   break;
-        case CoreFS::SpecialFolder::CommonDocuments        : folder_guid = FOLDERID_PublicDocuments; break;
-        case CoreFS::SpecialFolder::CommonMusic            : folder_guid = FOLDERID_PublicMusic;     break;
-        case CoreFS::SpecialFolder::CommonOemLinks         : folder_guid = FOLDERID_CommonOEMLinks;  break;
-        case CoreFS::SpecialFolder::CommonPictures         : folder_guid = FOLDERID_PublicPictures;  break;
-        case CoreFS::SpecialFolder::CommonProgramFiles     : /*folder_guid = ; */break;
-        case CoreFS::SpecialFolder::CommonProgramFilesX86  : /*folder_guid = ; */break;
-        case CoreFS::SpecialFolder::CommonPrograms         : folder_guid = FOLDERID_CommonPrograms; break;
-        case CoreFS::SpecialFolder::CommonStartMenu        : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::CommonStartup          : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::CommonTemplates        : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::CommonVideos           : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::Cookies                : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::Desktop                : folder_guid = FOLDERID_Desktop; break;
-        case CoreFS::SpecialFolder::DesktopDirectory       : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::Favorites              : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::Fonts                  : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::History                : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::InternetCache          : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::LocalApplicationData   : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::LocalizedResources     : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::MyComputer             : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::MyDocuments            : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::MyMusic                : folder_guid = FOLDERID_Music; break;
-        case CoreFS::SpecialFolder::MyPictures             : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::MyVideos               : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::NetworkShortcuts       : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::Personal               : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::PrinterShortcuts       : /*folder_guid = */; break;
-        case CoreFS::SpecialFolder::ProgramFiles           : folder_guid = FOLDERID_ProgramFilesX64; break;
-        case CoreFS::SpecialFolder::ProgramFilesX86        : folder_guid = FOLDERID_ProgramFilesX86; break;
-        case CoreFS::SpecialFolder::Programs               : folder_guid = FOLDERID_Programs;        break;
-        case CoreFS::SpecialFolder::Recent                 : folder_guid = FOLDERID_Recent;          break;
-        case CoreFS::SpecialFolder::Resources              : folder_guid = FOLDERID_ResourceDir;     break;
-        case CoreFS::SpecialFolder::SendTo                 : folder_guid = FOLDERID_SendTo;          break;
-        case CoreFS::SpecialFolder::StartMenu              : folder_guid = FOLDERID_StartMenu;       break;
-        case CoreFS::SpecialFolder::Startup                : folder_guid = FOLDERID_Startup;         break;
-        case CoreFS::SpecialFolder::System                 : folder_guid = FOLDERID_System;          break;
-        case CoreFS::SpecialFolder::SystemX86              : folder_guid = FOLDERID_SystemX86;       break;
-        case CoreFS::SpecialFolder::Templates              : folder_guid = FOLDERID_Templates;       break;
-        case CoreFS::SpecialFolder::UserProfile            : /*folder_guid = ;*/ break;
-        case CoreFS::SpecialFolder::Windows                : folder_guid = FOLDERID_Windows;         break;
+        case CoreFS::SpecialFolder::AdminTools             : folder_guid = FOLDERID_AdminTools;            break;
+        case CoreFS::SpecialFolder::ApplicationData        : folder_guid = FOLDERID_LocalAppData;          break;
+        case CoreFS::SpecialFolder::CDBurning              : folder_guid = FOLDERID_CDBurning;             break;
+        case CoreFS::SpecialFolder::CommonAdminTools       : folder_guid = FOLDERID_CommonAdminTools;      break;
+        case CoreFS::SpecialFolder::CommonApplicationData  : folder_guid = FOLDERID_ProgramData;           break;
+        case CoreFS::SpecialFolder::CommonDesktopDirectory : folder_guid = FOLDERID_PublicDesktop;         break;
+        case CoreFS::SpecialFolder::CommonDocuments        : folder_guid = FOLDERID_PublicDocuments;       break;
+        case CoreFS::SpecialFolder::CommonMusic            : folder_guid = FOLDERID_PublicMusic;           break;
+        case CoreFS::SpecialFolder::CommonOemLinks         : folder_guid = FOLDERID_CommonOEMLinks;        break;
+        case CoreFS::SpecialFolder::CommonPictures         : folder_guid = FOLDERID_PublicPictures;        break;
+        case CoreFS::SpecialFolder::CommonProgramFiles     : folder_guid = FOLDERID_ProgramFilesCommon;    break;
+        case CoreFS::SpecialFolder::CommonProgramFilesX86  : folder_guid = FOLDERID_ProgramFilesCommonX64; break;
+        case CoreFS::SpecialFolder::CommonPrograms         : folder_guid = FOLDERID_CommonPrograms;        break;
+        case CoreFS::SpecialFolder::CommonStartMenu        : folder_guid = FOLDERID_CommonStartMenu;       break;
+        case CoreFS::SpecialFolder::CommonStartup          : folder_guid = FOLDERID_CommonStartup;         break;
+        case CoreFS::SpecialFolder::CommonTemplates        : folder_guid = FOLDERID_CommonTemplates;       break;
+        case CoreFS::SpecialFolder::CommonVideos           : folder_guid = FOLDERID_PublicVideos;          break;
+        case CoreFS::SpecialFolder::Cookies                : folder_guid = FOLDERID_Cookies;               break;
+        case CoreFS::SpecialFolder::Desktop                : folder_guid = FOLDERID_Desktop;               break;
+        case CoreFS::SpecialFolder::DesktopDirectory       : folder_guid = FOLDERID_Desktop;               break;
+        case CoreFS::SpecialFolder::Favorites              : folder_guid = FOLDERID_Favorites;             break;
+        case CoreFS::SpecialFolder::Fonts                  : folder_guid = FOLDERID_Fonts;                 break;
+        case CoreFS::SpecialFolder::History                : folder_guid = FOLDERID_History;               break;
+        case CoreFS::SpecialFolder::InternetCache          : folder_guid = FOLDERID_InternetCache;         break;
+        case CoreFS::SpecialFolder::LocalApplicationData   : folder_guid = FOLDERID_LocalAppData;          break;
+        case CoreFS::SpecialFolder::LocalizedResources     : folder_guid = FOLDERID_LocalizedResourcesDir; break;
+        case CoreFS::SpecialFolder::MyComputer             : folder_guid = FOLDERID_ComputerFolder;        break;
+        case CoreFS::SpecialFolder::MyDocuments            : folder_guid = FOLDERID_Documents;             break;
+        case CoreFS::SpecialFolder::MyMusic                : folder_guid = FOLDERID_Music;                 break;
+        case CoreFS::SpecialFolder::MyPictures             : folder_guid = FOLDERID_Pictures;              break;
+        case CoreFS::SpecialFolder::MyVideos               : folder_guid = FOLDERID_Videos;                break;
+        case CoreFS::SpecialFolder::NetworkShortcuts       : folder_guid = FOLDERID_NetHood;               break;
+        case CoreFS::SpecialFolder::Personal               : folder_guid = FOLDERID_Documents;             break;
+        case CoreFS::SpecialFolder::PrinterShortcuts       : folder_guid = FOLDERID_PrintHood;             break;
+        case CoreFS::SpecialFolder::ProgramFiles           : folder_guid = FOLDERID_ProgramFilesX64;       break;
+        case CoreFS::SpecialFolder::ProgramFilesX86        : folder_guid = FOLDERID_ProgramFilesX86;       break;
+        case CoreFS::SpecialFolder::Programs               : folder_guid = FOLDERID_Programs;              break;
+        case CoreFS::SpecialFolder::Recent                 : folder_guid = FOLDERID_Recent;                break;
+        case CoreFS::SpecialFolder::Resources              : folder_guid = FOLDERID_ResourceDir;           break;
+        case CoreFS::SpecialFolder::SendTo                 : folder_guid = FOLDERID_SendTo;                break;
+        case CoreFS::SpecialFolder::StartMenu              : folder_guid = FOLDERID_StartMenu;             break;
+        case CoreFS::SpecialFolder::Startup                : folder_guid = FOLDERID_Startup;               break;
+        case CoreFS::SpecialFolder::System                 : folder_guid = FOLDERID_System;                break;
+        case CoreFS::SpecialFolder::SystemX86              : folder_guid = FOLDERID_SystemX86;             break;
+        case CoreFS::SpecialFolder::Templates              : folder_guid = FOLDERID_Templates;             break;
+        case CoreFS::SpecialFolder::UserProfile            : folder_guid = FOLDERID_Profile;               break;
+        case CoreFS::SpecialFolder::Windows                : folder_guid = FOLDERID_Windows;               break;
     }
 
     return get_folder_path_helper(folder_guid);
