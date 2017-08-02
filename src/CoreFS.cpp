@@ -1,6 +1,15 @@
 //COWTODO: Add license headers...
 //Header
 #include "../include/CoreFS.h"
+//std
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#if _WIN32
+    //COWNOTE: On Windows, Microsoft did the favor to us to make the
+    //  name differently.
+    #define stat _stat
+#endif
 
 //
 //Notice:
@@ -37,6 +46,7 @@ std::string CoreFS::GetPathSeparator()
 ////////////////////////////////////////////////////////////////////////////////
 // C# System.Environment Like API                                             //
 ////////////////////////////////////////////////////////////////////////////////
+//  Defined in repective OS file.
 //std::string CurrentDirectory()
 
 std::string CoreFS::NewLine()
@@ -47,14 +57,74 @@ std::string CoreFS::NewLine()
     return "\n";
 }
 
+//  Defined in repective OS file.
 //std::string SystemDirectory()
+
+//  Defined in repective OS file.
 //std::string GetFolderPath(SpecialFolder folder)
+
+//  Defined in repective OS file.
 //std::vector<std::string> GetLogicalDrives()
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Python os.path Like API  Like API                                          //
 ////////////////////////////////////////////////////////////////////////////////
+
+//COWTODO: Implement...
+//std::string AbsPath(const std::string &path);
+
+//COWTODO: Implement...
+//std::string Basename(const std::string &path);
+
+//COWTODO: Implement...
+//std::string CommonPath(const std::initializer_list<std::string> &paths);
+
+//COWTODO: Implement...
+//std::string CommonPrefix(const std::initializer_list<std::string> &paths);
+
+//COWTODO: Implement...
+//std::string Dirname(const std::string &path);
+
+//COWTODO: Implement...
+bool CoreFS::Exists(const std::string &path)
+{
+    struct stat sb;
+    return stat(path.c_str(), &sb) == 0;
+}
+
+//COWTODO: Implement...
+//std::string ExpandUser(const std::string &path);
+
+//COWTODO: Implement...
+//unsigned long GetATime(const std::string &filename);
+
+//COWTODO: Implement...
+//unsigned long GetCTime(const std::string &filename);
+
+//COWTODO: Implement...
+//unsigned long GetMTime(const std::string &filename);
+
+//COWTODO: Implement...
+//unsigned long GetSize(const std::string &filename);
+
+//COWTODO: Implement...
+//bool IsAbs(const std::string &path);
+
+//COWTODO: Implement...
+//bool IsDir(const std::string &path);
+
+//COWTODO: Implement...
+//bool IsFile(const std::string &path);
+
+//COWTODO: Implement...
+//bool IsLink(const std::string &path);
+
+//COWTODO: Implement...
+//bool IsMount(const std::string &path);
+
+//Join two (or more) paths.
+
 //Join two (or more) paths.
 std::string CoreFS::Join(
     const std::string &path,
@@ -67,10 +137,47 @@ std::string CoreFS::Join(
     for(const auto &comp : paths)
     {
         if(std::equal(fullpath.end() - sep_size, fullpath.end(), sep.begin()))
-           fullpath += comp;
+            fullpath += comp;
         else
             fullpath += sep + comp;
     }
 
     return fullpath;
 }
+
+
+//COWTODO: Implement...
+//bool LExists(const std::string &path);
+
+//COWTODO: Implement...
+//std::string NormCase(const std::string &path);
+
+//COWTODO: Implement...
+//std::string NormPath(const std::string &path);
+
+//COWTODO: Implement...
+//std::string AbsPath(const std::string &path);
+
+//COWTODO: Implement...
+//std::string RelPath(const std::string &path, const std::string &start = "");
+
+//COWTODO: Implement...
+//bool SameFile(const std::string &filename1, const std::string &filename2);
+
+//COWNOTE: Not implemented
+//sameopenfile(fp1, fp2)
+
+//COWNOTE: Not implemented
+//samestat(s1, s2)
+
+//COWTODO: Implement...
+//std::pair<std::string, std::string> Split(const std::string &path);
+
+//COWNOTE: Not implemented
+//splitdrive(p)
+
+//COWTODO: Implement...
+//std::pair<std::string, std::string> SplitExt(const std::string &path);
+
+//COWNOTE: Not implemented.
+//splitunc(p)
