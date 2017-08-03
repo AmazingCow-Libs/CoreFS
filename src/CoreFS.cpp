@@ -135,13 +135,22 @@ bool CoreFS::IsFile(const std::string &path)
     return check_stat_st_mode(path, S_IFREG);
 }
 
-//COWTODO: Implement...
-//bool IsLink(const std::string &path);
+//Test whether a path is a symbolic link.
+//This will always return false for Windows prior to 6.0.
+bool CoreFS::IsLink(const std::string &path)
+{
+    //COWTODO: Check a way to implement this easier and correctly.
+    //  The windows sdk doesn't provides the S_IFLNK mask, but 
+    //  I found a value on the python's stat.py file located at:
+    //      C:\Program Files\Anaconda3\Lib\stat.py
+    //  I think that the value should be stable enought to use
+    //  it here, since it, by its nature, can't change often.
+    //  So make a research about it, and continue the implementation.
+    return false;//check_stat_st_mode(path, S_IFLNK);
+}
 
 //COWTODO: Implement...
 //bool IsMount(const std::string &path);
-
-//Join two (or more) paths.
 
 //Join two (or more) paths.
 std::string CoreFS::Join(
