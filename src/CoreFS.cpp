@@ -30,6 +30,18 @@
 //  will be the same of every one of them.
 //
 
+////////////////////////////////////////////////////////////////////////////////
+// Helpers Functions                                                          //
+////////////////////////////////////////////////////////////////////////////////
+bool check_stat_st_mode(const std::string &path, unsigned mask)
+{
+    struct stat sb;
+    if(stat(path.c_str(), &sb) != 0)
+        return false;
+
+    return (sb.st_mode & S_IFMT) == mask;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // CoreFS API                                                                 //
@@ -111,11 +123,17 @@ bool CoreFS::Exists(const std::string &path)
 //COWTODO: Implement...
 //bool IsAbs(const std::string &path);
 
-//COWTODO: Implement...
-//bool IsDir(const std::string &path);
+//Return true if the pathname refers to an existing directory.
+bool CoreFS::IsDir(const std::string &path)
+{
+    return check_stat_st_mode(path, S_IFDIR);
+}
 
-//COWTODO: Implement...
-//bool IsFile(const std::string &path);
+//Test whether a path is a regular file
+bool CoreFS::IsFile(const std::string &path)
+{
+    return check_stat_st_mode(path, S_IFREG);
+}
 
 //COWTODO: Implement...
 //bool IsLink(const std::string &path);
