@@ -183,8 +183,10 @@ NS_COREFS_BEGIN
     //  Returns True for broken symbolic links
     bool LExists(const std::string &path);
 
-    //Normalize case of pathname.
-    //  Makes all characters lowercase and all slashes into backslashes.
+    //Normalize the case of a pathname.
+    //  On Unix and Mac OS X, this returns the path unchanged;
+    //  on case-insensitive filesystems, it converts the path to lowercase.
+    //  On Windows, it also converts forward slashes to backward slashes.
     std::string NormCase(const std::string &path);
 
     //Normalize path, eliminating double slashes, etc.
