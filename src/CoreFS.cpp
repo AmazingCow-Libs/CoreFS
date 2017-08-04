@@ -1,9 +1,13 @@
 //COWTODO: Add license headers...
 //Header
 #include "../include/CoreFS.h"
-//std
+//C
 #include <sys/types.h>
 #include <sys/stat.h>
+//std
+#include <algorithm>
+#include <cctype>
+
 
 #if _WIN32
     //COWNOTE: On Windows, Microsoft did the favor to us to make the
@@ -140,7 +144,7 @@ bool CoreFS::IsFile(const std::string &path)
 bool CoreFS::IsLink(const std::string &path)
 {
     //COWTODO: Check a way to implement this easier and correctly.
-    //  The windows sdk doesn't provides the S_IFLNK mask, but 
+    //  The windows sdk doesn't provides the S_IFLNK mask, but
     //  I found a value on the python's stat.py file located at:
     //      C:\Program Files\Anaconda3\Lib\stat.py
     //  I think that the value should be stable enought to use
@@ -179,8 +183,56 @@ std::string CoreFS::Join(
 //COWTODO: Implement...
 //std::string NormCase(const std::string &path);
 
-//COWTODO: Implement...
-//std::string NormPath(const std::string &path);
+//Normalize the case of a pathname.
+//  On Unix and Mac OS X, this returns the path unchanged;
+//  on case-insensitive filesystems, it converts the path to lowercase.
+//  On Windows, it also converts forward slashes to backward slashes.
+std::string CoreFS::NormPath(const std::string &path)
+{
+    //On non Windows platforms, just return the path.
+    #ifndef _WIN32
+        return path;
+    #endif //ifndef _WIN32
+
+    auto norm_path  = path;
+
+    const auto &sep       = CoreFS::GetPathSeparator();
+    const auto double_sep = sep + sep;
+
+    //Replace the slashes.
+    while(1)
+    {
+        auto pos = 0;
+
+        pos = norm_path.find_first_of("/", pos);
+        if(pos == std::string::npos)
+            break;
+
+        norm_path.replace(pos, 1, sep);
+    }
+
+    //Remove Duplicates.
+    while(1)
+    {
+        auto pos = 0;
+
+        pos = norm_path.find(double_sep, pos);
+        if(pos == std::string::npos)
+            break;
+
+        norm_path.replace(pos, 1, "");
+    }
+
+    //Make lowercase.
+    std::transform(
+        norm_path.begin(),
+        norm_path.end  (),
+        norm_path.begin(),
+        std::tolower
+    );
+
+    return norm_path;
+}
 
 //COWTODO: Implement...
 //std::string AbsPath(const std::string &path);
