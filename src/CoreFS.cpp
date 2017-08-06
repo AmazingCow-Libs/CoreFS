@@ -37,6 +37,7 @@
 //                                                                            //
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
+
 //Header
 #include "../include/CoreFS.h"
 //C
@@ -45,12 +46,21 @@
 //std
 #include <algorithm>
 #include <cctype>
+//CoreFS
+#include "../include/private/Macros.h"
 
+#if __linux__
+    // Includes //
+    #include <unistd.h>
 
-#if _WIN32
-    //COWNOTE: On Windows, Microsoft did the favor to us to make the
-    //  name differently.
+#elif _WIN32
+    // Includes //
+
+    // Defines //
+    //COWNOTE: On Windows, Microsoft did the favor to
+    //  us to make the names differently.
     #define stat _stat
+    #define getcwd _getcwd
 #endif
 
 //
@@ -100,8 +110,16 @@ std::string CoreFS::GetPathSeparator()
 ////////////////////////////////////////////////////////////////////////////////
 // C# System.Environment Like API                                             //
 ////////////////////////////////////////////////////////////////////////////////
-//  Defined in repective OS file.
-//std::string CurrentDirectory()
+std::string CoreFS::CurrentDirectory()
+{
+    //COWTODO: Add an assertion on the pbuf value.
+    auto p_buf = getcwd(nullptr, 0);
+    auto cwd   = std::string(p_buf);
+
+    SAFE_FREE(p_buf);
+
+    return cwd;
+}
 
 std::string CoreFS::NewLine()
 {
@@ -111,8 +129,10 @@ std::string CoreFS::NewLine()
     return "\n";
 }
 
-//  Defined in repective OS file.
-//std::string SystemDirectory()
+std::string CoreFS::SystemDirectory()
+{
+    return GetFolderPath(CoreFS::SpecialFolder::System);
+}
 
 //  Defined in repective OS file.
 //std::string GetFolderPath(SpecialFolder folder)
@@ -140,14 +160,15 @@ std::string CoreFS::NewLine()
 //COWTODO: Implement...
 //std::string Dirname(const std::string &path);
 
-//COWTODO: Implement...
+//Test whether a path exists.
+//  Returns False for broken symbolic links
 bool CoreFS::Exists(const std::string &path)
 {
     struct stat sb;
     return stat(path.c_str(), &sb) == 0;
 }
 
-//COWTODO: Implement...
+//  Defined in repective OS file.
 //std::string ExpandUser(const std::string &path);
 
 //COWTODO: Implement...
@@ -201,11 +222,20 @@ std::string CoreFS::Join(
 {
     auto fullpath = path;
     auto sep      = GetPathSeparator();
-    auto sep_size = sep.size();
 
     for(const auto &comp : paths)
     {
-        if(std::equal(fullpath.end() - sep_size, fullpath.end(), sep.begin()))
+        //If the current component is just the path separator
+        //but the fullpath is already filled we can skip it.
+        //The only case that it's needed is the start of the
+        //path since it indicates the root directory.
+        if(comp.empty() || (comp == sep && !fullpath.empty()))
+            continue;
+        
+        //COWTODO(n2omatt): There's any separators that are multi char?
+        if(fullpath.back() == sep[0] && comp.front() == sep[0])
+            fullpath += comp.substr(1);
+        else if(fullpath.back() == sep[0] || comp.front() == sep[0])
             fullpath += comp;
         else
             fullpath += sep + comp;
@@ -266,8 +296,9 @@ std::string CoreFS::NormPath(const std::string &path)
         norm_path.begin(),
         norm_path.end  (),
         norm_path.begin(),
-        std::tolower
+        ::tolower
     );
+
 
     return norm_path;
 }
