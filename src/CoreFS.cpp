@@ -88,7 +88,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 bool check_stat_st_mode(const std::string &path, unsigned mask)
 {
-    struct stat sb;
+    struct stat sb = {0};
     if(stat(path.c_str(), &sb) != 0)
         return false;
 
@@ -165,7 +165,7 @@ std::string CoreFS::SystemDirectory()
 //  Returns False for broken symbolic links
 bool CoreFS::Exists(const std::string &path)
 {
-    struct stat sb;
+    struct stat sb = {0};
     return stat(path.c_str(), &sb) == 0;
 }
 
