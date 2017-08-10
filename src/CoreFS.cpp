@@ -421,9 +421,27 @@ std::pair<std::string, std::string> CoreFS::Split(const std::string &path)
 
 //Split a pathname.
 //  Return a vector with all path components.
-std::vector<std::string> SplitAll(const std::string &path)
+std::vector<std::string> CoreFS::SplitAll(const std::string &path)
 {
+    auto components = std::vector<std::string>();
+    auto curr_path  = path;
 
+    while(true)
+    {
+        auto comp_pair = CoreFS::Split(curr_path);
+
+        if(!comp_pair.first.empty() && comp_pair.second.empty())
+            components.push_back(comp_pair.first);
+        else if(!comp_pair.second.empty())
+            components.push_back(comp_pair.second);
+
+        if(comp_pair.first == curr_path)
+            break;
+
+        curr_path = comp_pair.first;
+    }
+
+    return std::vector<std::string>(components.rbegin(), components.rend());
 }
 
 //COWNOTE: Not implemented
