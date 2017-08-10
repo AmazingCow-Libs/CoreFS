@@ -40,9 +40,9 @@
 
 #pragma once
 
-#define SAFE_FREE(_ptr_) do { \
-    if(_ptr_ != nullptr) {    \
-        free(_ptr_);          \
-        _ptr_ = nullptr;      \
-    }                         \
+#define SAFE_FREE(_ptr_) do {   \
+    if((_ptr_) != nullptr) {    \
+        free((_ptr_));          \
+        (_ptr_) = nullptr;      \
+    }                           \
 } while(0);
