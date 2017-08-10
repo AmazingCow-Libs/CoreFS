@@ -84,183 +84,189 @@
 //
 
 NS_COREFS_BEGIN
-    ///////////////////////////////////////////////////////////////////////////
-    // Enums / Constants / Typedefs                                          //
-    ///////////////////////////////////////////////////////////////////////////
-    enum class SpecialFolder {
-        AdminTools,
-        ApplicationData,
-        CDBurning,
-        CommonAdminTools,
-        CommonApplicationData,
-        CommonDesktopDirectory,
-        CommonDocuments,
-        CommonMusic,
-        CommonOemLinks,
-        CommonPictures,
-        CommonProgramFiles,
-        CommonProgramFilesX86,
-        CommonPrograms,
-        CommonStartMenu,
-        CommonStartup,
-        CommonTemplates,
-        CommonVideos,
-        Cookies,
-        Desktop,
-        DesktopDirectory,
-        Favorites,
-        Fonts,
-        History,
-        InternetCache,
-        LocalApplicationData,
-        LocalizedResources,
-        MyComputer,
-        MyDocuments,
-        MyMusic,
-        MyPictures,
-        MyVideos,
-        NetworkShortcuts,
-        Personal,
-        PrinterShortcuts,
-        ProgramFiles,
-        ProgramFilesX86,
-        Programs,
-        Recent,
-        Resources,
-        SendTo,
-        StartMenu,
-        Startup,
-        System,
-        SystemX86,
-        Templates,
-        UserProfile,
-        Windows
-    };
+
+////////////////////////////////////////////////////////////////////////////////
+// Enums / Constants / Typedefs                                               //
+////////////////////////////////////////////////////////////////////////////////
+enum class SpecialFolder {
+    AdminTools,
+    ApplicationData,
+    CDBurning,
+    CommonAdminTools,
+    CommonApplicationData,
+    CommonDesktopDirectory,
+    CommonDocuments,
+    CommonMusic,
+    CommonOemLinks,
+    CommonPictures,
+    CommonProgramFiles,
+    CommonProgramFilesX86,
+    CommonPrograms,
+    CommonStartMenu,
+    CommonStartup,
+    CommonTemplates,
+    CommonVideos,
+    Cookies,
+    Desktop,
+    DesktopDirectory,
+    Favorites,
+    Fonts,
+    History,
+    InternetCache,
+    LocalApplicationData,
+    LocalizedResources,
+    MyComputer,
+    MyDocuments,
+    MyMusic,
+    MyPictures,
+    MyVideos,
+    NetworkShortcuts,
+    Personal,
+    PrinterShortcuts,
+    ProgramFiles,
+    ProgramFilesX86,
+    Programs,
+    Recent,
+    Resources,
+    SendTo,
+    StartMenu,
+    Startup,
+    System,
+    SystemX86,
+    Templates,
+    UserProfile,
+    Windows
+};
 
 
-    ///////////////////////////////////////////////////////////////////////////
-    // CoreFS API                                                            //
-    ///////////////////////////////////////////////////////////////////////////
-    std::string GetPathSeparator();
+////////////////////////////////////////////////////////////////////////////////
+// CoreFS API                                                                 //
+////////////////////////////////////////////////////////////////////////////////
+std::string GetPathSeparator();
 
 
-    ///////////////////////////////////////////////////////////////////////////
-    // C# System.Environment Like API                                        //
-    ///////////////////////////////////////////////////////////////////////////
-    std::string CurrentDirectory();
-    std::string NewLine();
-    std::string SystemDirectory();
+////////////////////////////////////////////////////////////////////////////////
+// C# System.Environment Like API                                             //
+////////////////////////////////////////////////////////////////////////////////
+std::string CurrentDirectory();
+std::string NewLine();
+std::string SystemDirectory();
 
-    std::string GetFolderPath(SpecialFolder folder);
-    std::vector<std::string> GetLogicalDrives();
+std::string GetFolderPath(SpecialFolder folder);
+std::vector<std::string> GetLogicalDrives();
 
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Python os.path Like API                                               //
-    ///////////////////////////////////////////////////////////////////////////
-    //Return the absolute version of a path.
-    std::string AbsPath(const std::string &path);
+////////////////////////////////////////////////////////////////////////////////
+// Python os.path Like API                                                    //
+////////////////////////////////////////////////////////////////////////////////
+//Return the absolute version of a path.
+std::string AbsPath(const std::string &path);
 
-    //Returns the final component of a pathname
-    std::string Basename(const std::string &path);
+//Returns the final component of a pathname
+std::string Basename(const std::string &path);
 
-    //Given a sequence of path names, returns the longest common sub-path.
-    std::string CommonPath(const std::initializer_list<std::string> &paths);
+//Given a sequence of path names, returns the longest common sub-path.
+std::string CommonPath(const std::initializer_list<std::string> &paths);
 
-    //Given a list of pathnames, returns the longest common leading component
-    std::string CommonPrefix(const std::initializer_list<std::string> &paths);
+//Given a list of pathnames, returns the longest common leading component
+std::string CommonPrefix(const std::initializer_list<std::string> &paths);
 
-    //Returns the directory component of a pathname
-    std::string Dirname(const std::string &path);
+//Returns the directory component of a pathname
+std::string Dirname(const std::string &path);
 
-    //Test whether a path exists.
-    //  Returns False for broken symbolic links
-    bool Exists(const std::string &path);
+//Test whether a path exists.
+//  Returns False for broken symbolic links
+bool Exists(const std::string &path);
 
-    //Expand ~ and ~user constructs.
-    //  If user or $HOME is unknown, do nothing.
-    std::string ExpandUser(const std::string &path);
+//Expand ~ and ~user constructs.
+//  If user or $HOME is unknown, do nothing.
+std::string ExpandUser(const std::string &path);
 
-    //COWTODO: Check if we gonna implement this.
-    //expandvars(const std::string &path)
+//COWTODO: Check if we gonna implement this.
+//expandvars(const std::string &path)
 
-    //Return the last access time of a file, reported by os.stat().
-    unsigned long GetATime(const std::string &filename);
+//Return the last access time of a file, reported by os.stat().
+unsigned long GetATime(const std::string &filename);
 
-    //Return the metadata change time of a file, reported by os.stat().
-    unsigned long GetCTime(const std::string &filename);
+//Return the metadata change time of a file, reported by os.stat().
+unsigned long GetCTime(const std::string &filename);
 
-    //Return the last modification time of a file, reported by os.stat().
-    unsigned long GetMTime(const std::string &filename);
+//Return the last modification time of a file, reported by os.stat().
+unsigned long GetMTime(const std::string &filename);
 
-    //Return the size of a file, reported by os.stat().
-    unsigned long GetSize(const std::string &filename);
+//Return the size of a file, reported by os.stat().
+unsigned long GetSize(const std::string &filename);
 
-    //Test whether a path is absolute
-    bool IsAbs(const std::string &path);
+//Test whether a path is absolute
+bool IsAbs(const std::string &path);
 
-    //Return true if the pathname refers to an existing directory.
-    bool IsDir(const std::string &path);
+//Return true if the pathname refers to an existing directory.
+bool IsDir(const std::string &path);
 
-    //Test whether a path is a regular file
-    bool IsFile(const std::string &path);
+//Test whether a path is a regular file
+bool IsFile(const std::string &path);
 
-    //Test whether a path is a symbolic link.
-    //This will always return false for Windows prior to 6.0.
-    bool IsLink(const std::string &path);
+//Test whether a path is a symbolic link.
+//This will always return false for Windows prior to 6.0.
+bool IsLink(const std::string &path);
 
-    //Test whether a path is a mount point (a drive root, the root of a
-    //share, or a mounted volume)
-    bool IsMount(const std::string &path);
+//Test whether a path is a mount point (a drive root, the root of a
+//share, or a mounted volume)
+bool IsMount(const std::string &path);
 
-    //Join two (or more) paths.
-    std::string Join(
-        const std::string &path,
-        const std::initializer_list<std::string> &paths);
+//Join two (or more) paths.
+std::string Join(
+    const std::string &path,
+    const std::initializer_list<std::string> &paths);
 
-    //Test whether a path exists.
-    //  Returns True for broken symbolic links
-    bool LExists(const std::string &path);
+//Test whether a path exists.
+//  Returns True for broken symbolic links
+bool LExists(const std::string &path);
 
-    //Normalize the case of a pathname.
-    //  On Unix and Mac OS X, this returns the path unchanged;
-    //  on case-insensitive filesystems, it converts the path to lowercase.
-    //  On Windows, it also converts forward slashes to backward slashes.
-    std::string NormCase(const std::string &path);
+//Normalize the case of a pathname.
+//  On Unix and Mac OS X, this returns the path unchanged;
+//  on case-insensitive filesystems, it converts the path to lowercase.
+//  On Windows, it also converts forward slashes to backward slashes.
+std::string NormCase(const std::string &path);
 
-    //Normalize path, eliminating double slashes, etc.
-    std::string NormPath(const std::string &path);
+//Normalize path, eliminating double slashes, etc.
+std::string NormPath(const std::string &path);
 
-    //Return the absolute version of a path.
-    //  Just forward to realpath
-    std::string AbsPath(const std::string &path);
+//Return the absolute version of a path.
+//  Just forward to realpath
+std::string AbsPath(const std::string &path);
 
-    //Return a relative version of a path
-    std::string RelPath(const std::string &path, const std::string &start = "");
+//Return a relative version of a path
+std::string RelPath(const std::string &path, const std::string &start = "");
 
-    //Test whether two pathnames reference the same actual file
-    bool SameFile(const std::string &filename1, const std::string &filename2);
+//Test whether two pathnames reference the same actual file
+bool SameFile(const std::string &filename1, const std::string &filename2);
 
-    //COWNOTE: Not implemented
-    //sameopenfile(fp1, fp2)
+//COWNOTE: Not implemented
+//sameopenfile(fp1, fp2)
 
-    //COWNOTE: Not implemented
-    //samestat(s1, s2)
+//COWNOTE: Not implemented
+//samestat(s1, s2)
 
-    //Split a pathname.
-    //  Return tuple (head, tail) where tail is everything after the final slash.
-    //  Either part may be empty.
-    std::pair<std::string, std::string> Split(const std::string &path);
+//Split a pathname.
+//  Return tuple (head, tail) where tail is everything after the final slash.
+//  Either part may be empty.
+std::pair<std::string, std::string> Split(const std::string &path);
 
-    //COWNOTE: Not implemented
-    //splitdrive(p)
+//Split a pathname.
+//  Return a vector with all path components.
+std::vector<std::string> SplitAll(const std::string &path);
 
-    //Split the extension from a pathname.
-    //  Extension is everything from the last dot to the end, ignoring
-    //  leading dots.  Returns "(root, ext)"; ext may be empty.
-    std::pair<std::string, std::string> SplitExt(const std::string &path);
 
-    //COWNOTE: Not implemented.
-    //splitunc(p)
+//COWNOTE: Not implemented
+//splitdrive(p)
+
+//Split the extension from a pathname.
+//  Extension is everything from the last dot to the end, ignoring
+//  leading dots.  Returns "(root, ext)"; ext may be empty.
+std::pair<std::string, std::string> SplitExt(const std::string &path);
+
+//COWNOTE: Not implemented.
+//splitunc(p)
 
 NS_COREFS_END
