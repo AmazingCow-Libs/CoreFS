@@ -88,13 +88,13 @@ std::string _read_xdg_user_dir(
     //COWNOTE(n2omatt): Tried to follow the implementation at:
     //  ./mono/mcs/class/corlib/System/Environment.cs
     //Of the function ReadXdgUserDir
-    
+
     //Check if the XDG key is on environment vars first.
     //  If so, just return it's value.
     auto env_path = _read_env(key);
     if(!env_path.empty())
         return env_path;
-    
+
     //According with the XDG specs there's a file located
     //on XDG_CONFIG_HOME/user-dirs.dirs that has the definitions
     //for some "well known" directories.
@@ -107,26 +107,26 @@ std::string _read_xdg_user_dir(
     auto full_config_path = CoreFS::Join(config_dir, {"user-dirs.dirs"});
     if(!CoreFS::Exists(full_config_path)) //There's no such file.
         return CoreFS::Join(home_dir, {fallback});
-    
+
     std::ifstream in_file(full_config_path, std::ios::in);
     while(!in_file.eof())
     {
         std::string line;
         std::getline(in_file, line);
-        
+
         if(line.empty())
             continue;
-        
+
         //The keys/values on the user-dirs.dirs file is defined to be:
         //  XDG_XXX_DIR=$HOME/YYYY
         //So we gonna try to get the index the current requested key
         //plus the '=' char.
         auto key_index = line.find(key + "=");
-        
+
         //Not found.
         if(key_index == std::string::npos)
             continue;
-        
+
         //Now we have the start index of XDG_XXX_DIR key
         //  It might be have whitespaces on the left yet,
         //  or might start with the '#' char meaning thet
@@ -142,11 +142,11 @@ std::string _read_xdg_user_dir(
                 break;
             }
         }
-        
+
         if(is_commented)
             continue;
-        
-        
+
+
         //Now we're sure that even padded with whitespaces
         //the key value is almost valid, we just need to
         //check if we have the $HOME string.
@@ -155,21 +155,21 @@ std::string _read_xdg_user_dir(
         auto value_component = line.substr(
              key_index + key.size() + 1 //1 is the '=' separator.
         );
-        
+
         //Notice that the path is enclosed in quotes, so
         //we need take it in account.
         auto is_relative = value_component.find("$HOME") == 1;
         auto start_index = is_relative ? 6 /* len("$HOME) == 6 */ : 1;
         auto end_index   = value_component.size() - 1;
-        
+
         auto path = value_component.substr(start_index, end_index - start_index);
-        
+
         if(is_relative)
             return CoreFS::Join(home_dir, {path});
-        
+
         return path;
     }
-    
+
     return CoreFS::Join(home_dir, {fallback});
 }
 
@@ -180,10 +180,8 @@ std::string _read_xdg_user_dir(
 //  Defined at: CoreFS.cpp
 //std::string NewLine()
 
-std::string CoreFS::SystemDirectory()
-{
-   return GetFolderPath(SpecialFolder::System);
-}
+//  Defined at: CoreFS.cpp
+//std::string SystemDirectory()
 
 std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
 {
@@ -191,30 +189,30 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
     //  I'm trying to follow the maximum possible the Mono implementation.
     //  I'm referring to file:
     //    ./mono/mcs/class/corlib/System/Environment.cs
-    
+
     std::string home_dir = CoreFS::ExpandUser("~");
     std::string folder_path;
-    
+
     auto data_dir = _read_env("XDG_DATA_HOME");
     if(data_dir.empty())
         data_dir = CoreFS::Join(home_dir, {".local", "share"});
-    
+
     auto config_dir = _read_env("XDG_CONFIG_HOME");
     if(config_dir.empty())
         config_dir = CoreFS::Join(home_dir, {".config"});
-        
+
     switch(folder)
     {
         case SpecialFolder::ApplicationData       : folder_path = config_dir;   break;
         case SpecialFolder::LocalApplicationData  : folder_path = data_dir;     break;
         case SpecialFolder::CommonApplicationData : folder_path = "/usr/share"; break;
-        
+
         // Personal / User Profile
         case SpecialFolder::Personal    :
         case SpecialFolder::UserProfile : {
             folder_path = home_dir;
         } break;
-        
+
         // Desktop
         case SpecialFolder::Desktop          :
         case SpecialFolder::DesktopDirectory : {
@@ -223,7 +221,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
                "XDG_DESKTOP_DIR", "Desktop"
             );
         } break;
-    
+
         // Music
         case SpecialFolder::MyMusic : {
             folder_path = _read_xdg_user_dir(
@@ -231,7 +229,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
                 "XDG_MUSIC_DIR", "Music"
             );
         } break;
-        
+
         // Pictures
         case SpecialFolder::MyPictures : {
             folder_path = _read_xdg_user_dir(
@@ -239,7 +237,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
                 "XDG_PICTURES_DIR", "Pictures"
             );
         } break;
-    
+
         // Videos
         case SpecialFolder::MyVideos: {
             folder_path = _read_xdg_user_dir(
@@ -247,7 +245,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
                 "XDG_VIDEOS_DIR", "Videos"
             );
         } break;
-        
+
         // Templates
         case SpecialFolder::Templates: {
             folder_path = _read_xdg_user_dir(
@@ -255,16 +253,16 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
                 "XDG_TEMPLATES_DIR", "Templates"
             );
         } break;
-    
+
         case SpecialFolder::CommonTemplates: {
             folder_path = "/usr/share/templates";
         } break;
-    
+
         //Fonts
         case SpecialFolder::Fonts : {
             folder_path = CoreFS::Join(home_dir, {".fonts"});
         } break;
-        
+
         //Not defined on GNU/Linux.
         case SpecialFolder::AdminTools             :
         case SpecialFolder::CDBurning              :
