@@ -46,6 +46,7 @@
 //std
 #include <algorithm>
 #include <cctype>
+#include <sstream>
 //CoreFS
 #include "../include/private/Macros.h"
 
@@ -231,7 +232,7 @@ std::string CoreFS::Join(
         //path since it indicates the root directory.
         if(comp.empty() || (comp == sep && !fullpath.empty()))
             continue;
-        
+
         //COWTODO(n2omatt): There's any separators that are multi char?
         if(fullpath.back() == sep[0] && comp.front() == sep[0])
             fullpath += comp.substr(1);
@@ -248,18 +249,16 @@ std::string CoreFS::Join(
 //COWTODO: Implement...
 //bool LExists(const std::string &path);
 
-//COWTODO: Implement...
-//std::string NormCase(const std::string &path);
 
 //Normalize the case of a pathname.
 //  On Unix and Mac OS X, this returns the path unchanged;
 //  on case-insensitive filesystems, it converts the path to lowercase.
 //  On Windows, it also converts forward slashes to backward slashes.
-std::string CoreFS::NormPath(const std::string &path)
+std::string CoreFS::NormCase(const std::string &path)
 {
     //On non Windows platforms, just return the path.
     #ifndef _WIN32
-        return path;
+    return path;
     #endif //ifndef _WIN32
 
     auto norm_path  = path;
@@ -303,6 +302,89 @@ std::string CoreFS::NormPath(const std::string &path)
     return norm_path;
 }
 
+//Normalize path, eliminating double slashes, etc.
+std::string CoreFS::NormPath(const std::string &path)
+{
+    //COWNOTE(n2omatt): Following the implementation of:
+    //  /usr/lib/python2.7/posixpath.py
+    if(path.empty())
+        return ".";
+
+    auto   sep             = GetPathSeparator();
+    size_t initial_slashes = path[0] == sep[0] ? 1 : 0;
+
+    if(initial_slashes != 0)
+    {
+        auto index = path.find_first_not_of(sep);
+        initial_slashes = (index != std::string::npos) ? index : path.size();
+    }
+
+    auto components = std::vector<std::string>();
+    auto curr_path  = path.substr(initial_slashes);
+
+    while(!curr_path.empty())
+    {
+        auto index = curr_path.find_first_of(sep);
+        auto comp  = curr_path.substr(0, index);
+
+        auto double_dots         = (comp == "..");
+        auto single_dot          = (comp ==  ".");
+        auto comps_empty         = components.empty();
+        auto already_double_dots = !comps_empty && components.back() == "..";
+        auto start_with_slashes  = initial_slashes > 0;
+
+        if(comp.empty())
+        {
+            //Do nothing...
+        }
+        //Same directory...
+        else if(single_dot)
+        {
+            //Do nothing...
+        }
+        //Already on root of path...
+        else if(double_dots && comps_empty && start_with_slashes)
+        {
+            //Do nothing...
+        }
+        //Go back one level...
+        else if(double_dots && !comps_empty && !already_double_dots)
+        {
+            components.pop_back();
+        }
+        else
+        {
+            components.push_back(comp);
+        }
+
+        if(index == std::string::npos)
+            break;
+
+        curr_path = curr_path.substr(index +1);
+    }
+
+
+    //Make the output path.
+    std::stringstream ss;
+
+    //Put the initial slashes.
+    //  POSIX allows one or two initial slashes, but treats
+    //  three or more as single slash.
+    initial_slashes = (initial_slashes > 2) ? 1 : initial_slashes;
+    for(int i = 0; i < initial_slashes; ++i)
+        ss << sep;
+    //Put the components
+    for(int i = 0; i < components.size(); ++i)
+    {
+        ss << components[i];
+        if(i != components.size() -1)
+            ss << sep;
+    }
+
+    return ss.str();
+}
+
+
 //COWTODO: Implement...
 //std::string AbsPath(const std::string &path);
 
@@ -318,8 +400,31 @@ std::string CoreFS::NormPath(const std::string &path)
 //COWNOTE: Not implemented
 //samestat(s1, s2)
 
-//COWTODO: Implement...
-//std::pair<std::string, std::string> Split(const std::string &path);
+//Split a pathname.
+//  Return tuple (head, tail) where tail is everything after the final slash.
+//  Either part may be empty.
+std::pair<std::string, std::string> CoreFS::Split(const std::string &path)
+{
+    auto sep   = CoreFS::GetPathSeparator();
+    auto index = path.rfind(sep);
+
+    if(index == std::string::npos)
+        return std::make_pair("", path);
+
+    auto offset = (index == 0 && path[0] == sep[0]) ? 1 : 0;
+
+    return std::make_pair(
+        path.substr(0, index + offset),
+        path.substr(index + 1)
+    );
+};
+
+//Split a pathname.
+//  Return a vector with all path components.
+std::vector<std::string> SplitAll(const std::string &path)
+{
+
+}
 
 //COWNOTE: Not implemented
 //splitdrive(p)
