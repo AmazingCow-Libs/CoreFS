@@ -165,8 +165,8 @@ std::string AbsPath(const std::string &path);
 //Returns the final component of a pathname
 std::string Basename(const std::string &path);
 
-
-//Given a list of pathnames, returns the longest common leading component
+//Given a list of pathnames,
+//returns the longest common leading component
 std::string CommonPrefix(const std::initializer_list<std::string> &paths);
 
 //Returns the directory component of a pathname
@@ -184,13 +184,13 @@ std::string ExpandUser(const std::string &path);
 //expandvars(const std::string &path)
 
 //Return the last access time of a file, reported by os.stat().
-unsigned long GetATime(const std::string &filename);
+time_t GetATime(const std::string &filename);
 
 //Return the metadata change time of a file, reported by os.stat().
-unsigned long GetCTime(const std::string &filename);
+time_t GetCTime(const std::string &filename);
 
 //Return the last modification time of a file, reported by os.stat().
-unsigned long GetMTime(const std::string &filename);
+time_t GetMTime(const std::string &filename);
 
 //Return the size of a file, reported by os.stat().
 unsigned long GetSize(const std::string &filename);

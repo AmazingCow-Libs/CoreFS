@@ -145,19 +145,45 @@ std::string CoreFS::SystemDirectory()
 ////////////////////////////////////////////////////////////////////////////////
 // Python os.path Like API                                                    //
 ////////////////////////////////////////////////////////////////////////////////
-
-//COWTODO: Implement...
+//  Defined in repective OS file.
 //std::string AbsPath(const std::string &path);
 
-//COWTODO: Implement...
-//std::string Basename(const std::string &path);
+//Returns the final component of a pathname
+std::string CoreFS::Basename(const std::string &path)
+{
+    //COWNOTE(n2omatt): Trying to follow:
+    //  /usr/lib/python2.7/posixpath.py
+    return CoreFS::Split(path).second;
+}
 
+//Given a list of pathnames,
+//returns the longest common leading component
+std::string CoreFS::CommonPrefix(const std::initializer_list<std::string> &paths)
+{
+    //COWNOTE(n2omatt): Trying to follow:
+    //  /usr/lib/python2.7/posixpath.py
+    if(paths.size() == 0)
+        return "";
 
-//COWTODO: Implement...
-//std::string CommonPrefix(const std::initializer_list<std::string> &paths);
+    auto s1 = std::min(paths);
+    auto s2 = std::max(paths);
 
-//COWTODO: Implement...
-//std::string Dirname(const std::string &path);
+    for(int i = 0; i < s1.size(); ++i)
+    {
+        if(s1[i] != s2[i])
+            return s1.substr(0, i);
+    }
+
+    return s1;
+}
+
+//Returns the directory component of a pathname
+std::string CoreFS::Dirname(const std::string &path)
+{
+    //COWNOTE(n2omatt): Trying to follow:
+    //  /usr/lib/python2.7/posixpath.py
+    return CoreFS::Split(path).first;
+}
 
 //Test whether a path exists.
 //  Returns False for broken symbolic links
@@ -170,17 +196,24 @@ bool CoreFS::Exists(const std::string &path)
 //  Defined in repective OS file.
 //std::string ExpandUser(const std::string &path);
 
-//COWTODO: Implement...
-//unsigned long GetATime(const std::string &filename);
+//Return the last access time of a file, reported by os.stat().
+time_t CoreFS::GetATime(const std::string &filename)
+{
+    struct stat sb = {0};
+    if(stat(filename.c_str(), &sb) != 0)
+        return -1;
 
-//COWTODO: Implement...
-//unsigned long GetCTime(const std::string &filename);
+    return sb.st_atime;
+}
 
-//COWTODO: Implement...
-//unsigned long GetMTime(const std::string &filename);
+//Return the metadata change time of a file, reported by os.stat().
+time_t GetCTime(const std::string &filename);
 
-//COWTODO: Implement...
-//unsigned long GetSize(const std::string &filename);
+//Return the last modification time of a file, reported by os.stat().
+time_t GetMTime(const std::string &filename);
+
+//Return the size of a file, reported by os.stat().
+unsigned long GetSize(const std::string &filename);
 
 //COWTODO: Implement...
 //bool IsAbs(const std::string &path);

@@ -309,9 +309,36 @@ std::vector<std::string> CoreFS::GetLogicalDrives()
     return std::vector<std::string>();
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
-// C# System.Environment Like API                                             //
+// Python os.path Like API                                                    //
 ////////////////////////////////////////////////////////////////////////////////
+//Return the absolute version of a path.
+std::string CoreFS::AbsPath(const std::string &path)
+{
+    //COWNOTE(n2omatt): Trying to follow the implemenation of:
+    //  /usr/lib/python2.7/posixpath.py
+    if(CoreFS::IsAbs(path))
+        return path;
+
+    return CoreFS::Join(
+        CoreFS::CurrentDirectory(),
+        {path}
+    );
+}
+
+//  Defined in CoreFS.cpp
+//std::string Basename(const std::string &path);
+
+//  Defined in CoreFS.cpp
+//std::string CommonPrefix(const std::initializer_list<std::string> &paths);
+
+//  Defined in CoreFS.cpp
+//std::string Dirname(const std::string &path)
+
+//  Defined in CoreFS.cpp
+bool Exists(const std::string &path);
+
 std::string CoreFS::ExpandUser(const std::string &path)
 {
     //COWNOTE(n2omatt): Following the python's os.path.expand
@@ -367,4 +394,21 @@ std::string CoreFS::ExpandUser(const std::string &path)
     );
 }
 
+//  Defined in CoreFS.cpp
+//time_t GetATime(const std::string &filename);
+
+//  Defined in CoreFS.cpp
+//time_t GetCTime(const std::string &filename);
+
+//  Defined in CoreFS.cpp
+//time_t GetMTime(const std::string &filename);
+
+//  Defined in CoreFS.cpp
+//unsigned long GetSize(const std::string &filename);
+
+//Test whether a path is absolute
+bool CoreFS::IsAbs(const std::string &path)
+{
+    return !path.empty() && path[0] == GetPathSeparator()[0];
+}
 #endif //__linux__
