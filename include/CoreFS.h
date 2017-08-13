@@ -165,8 +165,6 @@ std::string AbsPath(const std::string &path);
 //Returns the final component of a pathname
 std::string Basename(const std::string &path);
 
-//Given a sequence of path names, returns the longest common sub-path.
-std::string CommonPath(const std::initializer_list<std::string> &paths);
 
 //Given a list of pathnames, returns the longest common leading component
 std::string CommonPrefix(const std::initializer_list<std::string> &paths);
