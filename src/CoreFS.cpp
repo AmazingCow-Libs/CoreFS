@@ -135,17 +135,17 @@ std::string CoreFS::SystemDirectory()
     return GetFolderPath(CoreFS::SpecialFolder::System);
 }
 
-//  Defined in repective OS file.
+//  Defined in respective OS file.
 //std::string GetFolderPath(SpecialFolder folder)
 
-//  Defined in repective OS file.
+//  Defined in respective OS file.
 //std::vector<std::string> GetLogicalDrives()
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Python os.path Like API                                                    //
 ////////////////////////////////////////////////////////////////////////////////
-//  Defined in repective OS file.
+//  Defined in respective OS file.
 //std::string AbsPath(const std::string &path);
 
 //Returns the final component of a pathname
@@ -193,7 +193,7 @@ bool CoreFS::Exists(const std::string &path)
     return stat(path.c_str(), &sb) == 0;
 }
 
-//  Defined in repective OS file.
+//  Defined in respective OS file.
 //std::string ExpandUser(const std::string &path);
 
 //Return the last access time of a file, reported by os.stat().

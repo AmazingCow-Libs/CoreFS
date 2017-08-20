@@ -316,7 +316,7 @@ std::vector<std::string> CoreFS::GetLogicalDrives()
 //Return the absolute version of a path.
 std::string CoreFS::AbsPath(const std::string &path)
 {
-    //COWNOTE(n2omatt): Trying to follow the implemenation of:
+    //COWNOTE(n2omatt): Trying to follow the implementation of:
     //  /usr/lib/python2.7/posixpath.py
     if(CoreFS::IsAbs(path))
         return path;
