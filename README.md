@@ -26,6 +26,48 @@ As usual, you are **very welcomed** to **share** and **hack** it.
 
 
 <!-- ####################################################################### -->
+<!-- Implementation ######################################################## -->
+<!-- ####################################################################### -->
+## Implementation:
+
+| Function              | GNU/Linux     | W32   |
+| --------------------- |:-------------:| -----:|
+| GetPathSeparator      | Done          | Done  |
+|                       |               |       |
+| CurrentDirectory      | Done          | Done  |
+| NewLine               | Done          | Done  |
+| SystemDirectory       | Done          | Done  |
+| GetFolderPath         | Done          | Done  |
+| GetLogicalDrives      |               |       |
+|                       |               |       |
+| AbsPath               | Done          |       |
+| Basename              | Done          | Done  |
+| CommonPrefix          | Done          | Done  |
+| Dirname               | Done          | Done  |
+| Exists                | Done          | Done  |
+| ExpandUser            | Done          |       |
+| GetATime              | Done          | Done  |
+| GetCTime              | Done          | Done  |
+| GetMTime              | Done          | Done  |
+| GetSize               | Done          | Done  |
+| IsAbs                 | Done          |       |
+| IsDir                 | Done          | Done  |
+| IsFile                | Done          | Done  |
+| IsLink                |               |       |
+| IsMount               |               |       |
+| Join                  | Done          | Done  |
+| LExists               |               |       |
+| NormCase              | Done          | Done  |
+| NormPath              | Done          | Done  |
+| AbsPath               | Done          |       |
+| RelPath               | Done          |       |
+| SameFile              | Done          | Done  |
+| Split                 | Done          | Done  |
+| SplitAll              | Done          | Done  |
+| SplitExt              | Done          | Done  |
+
+
+<!-- ####################################################################### -->
 <!-- Usage ################################################################# -->
 <!-- ####################################################################### -->
 
