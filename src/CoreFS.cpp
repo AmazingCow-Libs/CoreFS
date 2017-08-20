@@ -273,9 +273,24 @@ bool CoreFS::IsLink(const std::string &path)
 //bool IsMount(const std::string &path);
 
 //Join two (or more) paths.
+std::string CoreFS::Join(const std::vector<std::string> &paths)
+{
+    if(paths.size() == 0)
+        return "";
+
+    if(paths.size() == 1)
+        return *paths.begin();
+
+    return CoreFS::Join(
+        *paths.begin(),
+        std::vector<std::string>(paths.begin()+1, paths.end())
+    );
+}
+
+//Join two (or more) paths.
 std::string CoreFS::Join(
     const std::string &path,
-    const std::initializer_list<std::string> &paths)
+    const std::vector<std::string> &paths)
 {
     auto fullpath = path;
     auto sep      = GetPathSeparator();

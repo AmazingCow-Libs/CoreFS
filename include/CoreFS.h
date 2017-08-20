@@ -213,9 +213,12 @@ bool IsLink(const std::string &path);
 bool IsMount(const std::string &path);
 
 //Join two (or more) paths.
+std::string Join(const std::vector<std::string> &paths);
+
+//Join two (or more) paths.
 std::string Join(
     const std::string &path,
-    const std::initializer_list<std::string> &paths);
+    const std::vector<std::string> &paths);
 
 //Test whether a path exists.
 //  Returns True for broken symbolic links
