@@ -459,10 +459,6 @@ std::string CoreFS::NormPath(const std::string &path)
     return ss.str();
 }
 
-
-//  Defined in respective OS file.
-//std::string AbsPath(const std::string &path);
-
 //  Defined in respective OS file.
 //std::string RelPath(const std::string &path, const std::string &start = "");
 

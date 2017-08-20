@@ -233,10 +233,6 @@ std::string NormCase(const std::string &path);
 //Normalize path, eliminating double slashes, etc.
 std::string NormPath(const std::string &path);
 
-//Return the absolute version of a path.
-//  Just forward to realpath
-std::string AbsPath(const std::string &path);
-
 //Return a relative version of a path
 std::string RelPath(const std::string &path, const std::string &start = ".");
 
