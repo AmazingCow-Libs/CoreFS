@@ -213,9 +213,16 @@ time_t GetCTime(const std::string &filename);
 time_t GetMTime(const std::string &filename);
 
 //Return the size of a file, reported by os.stat().
-unsigned long GetSize(const std::string &filename);
+long int GetSize(const std::string &filename)
+{
+    //COWNOTE(n2omatt): Trying to follow:
+    //  /usr/lib/python2.7/posixpath.py
+    struct stat sb = {0};
+    if(stat(filename.c_str(), &sb) != 0)
+        return -1;
 
-//COWTODO: Implement...
+    return sb.st_size;
+}
 //bool IsAbs(const std::string &path);
 
 //Return true if the pathname refers to an existing directory.

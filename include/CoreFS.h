@@ -193,7 +193,7 @@ time_t GetCTime(const std::string &filename);
 time_t GetMTime(const std::string &filename);
 
 //Return the size of a file, reported by os.stat().
-unsigned long GetSize(const std::string &filename);
+long int GetSize(const std::string &filename);
 
 //Test whether a path is absolute
 bool IsAbs(const std::string &path);
