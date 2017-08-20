@@ -238,7 +238,7 @@ std::string NormPath(const std::string &path);
 std::string AbsPath(const std::string &path);
 
 //Return a relative version of a path
-std::string RelPath(const std::string &path, const std::string &start = "");
+std::string RelPath(const std::string &path, const std::string &start = ".");
 
 //Test whether two pathnames reference the same actual file
 bool SameFile(const std::string &filename1, const std::string &filename2);
