@@ -182,6 +182,9 @@ std::string _read_xdg_user_dir(
 // C# System.Environment Like API                                             //
 ////////////////////////////////////////////////////////////////////////////////
 //  Defined at: CoreFS.cpp
+//std::string CurrentDirectory();
+
+//  Defined at: CoreFS.cpp
 //std::string NewLine()
 
 //  Defined at: CoreFS.cpp
@@ -331,43 +334,6 @@ std::string CoreFS::AbsPath(const std::string &path)
     );
 }
 
-//Return a relative version of a path
-std::string CoreFS::RelPath(
-    const std::string &path,
-    const std::string &start /* = "." */)
-{
-    //COWNOTE(n2omatt): Trying to follow the implementation of:
-    //  /usr/lib/python2.7/posixpath.py
-    auto abs_path  = CoreFS::AbsPath(path);
-    auto abs_start = CoreFS::AbsPath(start);
-
-    auto path_comps  = CoreFS::SplitAll(abs_path);
-    auto start_comps = CoreFS::SplitAll(abs_start);
-
-    //Work out how much of the filepath is shared by start and path.
-    auto i = 0;
-    for(;;++i)
-    {
-        //COWHACK(n2omatt): Must have a std algorithm to get the
-        //position at the ranges differ.
-        if(i >= path_comps.size() || i >= start_comps.size())
-            break;
-        if(path_comps[i] != start_comps[i])
-            break;
-    }
-
-    auto double_dots_count = start_comps.size() - i;
-    auto final_comps       = std::vector<std::string>(double_dots_count, "..");
-    std::copy(
-        path_comps.begin()+i,
-        path_comps.end(),
-        std::back_inserter(final_comps)
-    );
-
-    auto final_path = CoreFS::Join(final_comps);
-    return final_path;
-}
-
 //  Defined in CoreFS.cpp
 //std::string Basename(const std::string &path);
 
@@ -452,4 +418,81 @@ bool CoreFS::IsAbs(const std::string &path)
 {
     return !path.empty() && path[0] == GetPathSeparator()[0];
 }
+
+//  Defined in CoreFS.cpp
+//bool IsDir(const std::string &path);
+
+//  Defined in CoreFS.cpp
+//bool IsFile(const std::string &path);
+
+//  Defined in CoreFS.cpp
+//bool IsLink(const std::string &path);
+
+//  Defined in CoreFS.cpp
+//bool IsMount(const std::string &path);
+
+//  Defined in CoreFS.cpp
+//std::string Join(const std::vector<std::string> &paths);
+
+//  Defined in CoreFS.cpp
+//std::string Join(
+//    const std::string &path,
+//    const std::vector<std::string> &paths);
+
+//  Defined in CoreFS.cpp
+//bool LExists(const std::string &path);
+
+//  Defined in CoreFS.cpp
+//std::string NormCase(const std::string &path);
+
+//  Defined in CoreFS.cpp
+//std::string NormPath(const std::string &path);
+
+
+//Return a relative version of a path
+std::string CoreFS::RelPath(
+    const std::string &path,
+    const std::string &start /* = "." */)
+{
+    //COWNOTE(n2omatt): Trying to follow the implementation of:
+    //  /usr/lib/python2.7/posixpath.py
+    auto abs_path  = CoreFS::AbsPath(path);
+    auto abs_start = CoreFS::AbsPath(start);
+
+    auto path_comps  = CoreFS::SplitAll(abs_path);
+    auto start_comps = CoreFS::SplitAll(abs_start);
+
+    //Work out how much of the filepath is shared by start and path.
+    auto i = 0;
+    for(;;++i)
+    {
+        //COWHACK(n2omatt): Must have a std algorithm to get the
+        //position at the ranges differ.
+        if(i >= path_comps.size() || i >= start_comps.size())
+            break;
+        if(path_comps[i] != start_comps[i])
+            break;
+    }
+
+    auto double_dots_count = start_comps.size() - i;
+    auto final_comps       = std::vector<std::string>(double_dots_count, "..");
+    std::copy(
+        path_comps.begin()+i,
+        path_comps.end(),
+        std::back_inserter(final_comps)
+    );
+
+    auto final_path = CoreFS::Join(final_comps);
+    return final_path;
+}
+
+//  Defined in CoreFS.cpp
+//std::pair<std::string, std::string> Split(const std::string &path);
+
+//  Defined in CoreFS.cpp
+//std::pair<std::string, std::string> Split(const std::string &path);
+
+//  Defined in CoreFS.cpp
+//std::pair<std::string, std::string> SplitExt(const std::string &path);
+
 #endif //__linux__
