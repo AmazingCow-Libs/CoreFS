@@ -207,10 +207,28 @@ time_t CoreFS::GetATime(const std::string &filename)
 }
 
 //Return the metadata change time of a file, reported by os.stat().
-time_t GetCTime(const std::string &filename);
+time_t GetCTime(const std::string &filename)
+{
+    //COWNOTE(n2omatt): Trying to follow:
+    //  /usr/lib/python2.7/posixpath.py
+    struct stat sb = {0};
+    if(stat(filename.c_str(), &sb) != 0)
+        return -1;
+
+    return sb.st_ctime;
+}
 
 //Return the last modification time of a file, reported by os.stat().
-time_t GetMTime(const std::string &filename);
+time_t GetMTime(const std::string &filename)
+{
+    //COWNOTE(n2omatt): Trying to follow:
+    //  /usr/lib/python2.7/posixpath.py
+    struct stat sb = {0};
+    if(stat(filename.c_str(), &sb) != 0)
+        return -1;
+
+    return sb.st_mtime;
+}
 
 //Return the size of a file, reported by os.stat().
 long int GetSize(const std::string &filename)
