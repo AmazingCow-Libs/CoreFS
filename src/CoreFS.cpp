@@ -466,8 +466,26 @@ std::string CoreFS::NormPath(const std::string &path)
 //  Defined in respective OS file.
 //std::string RelPath(const std::string &path, const std::string &start = "");
 
-//COWTODO: Implement...
-//bool SameFile(const std::string &filename1, const std::string &filename2);
+//Test whether two pathnames reference the same actual file
+bool CoreFS::SameFile(
+    const std::string &filename1,
+    const std::string &filename2)
+{
+    //COWNOTE(n2omatt): Trying to follow:
+    //  /usr/lib/python2.7/posixpath.py
+
+    struct stat st1 = {0};
+    struct stat st2 = {0};
+
+    if(stat(filename1.c_str(), &st1) != 0)
+        return false;
+
+    if(stat(filename2.c_str(), &st2) != 0)
+        return false;
+
+    return st1.st_ino == st2.st_ino
+        && st1.st_dev == st2.st_dev;
+}
 
 //COWNOTE: Not implemented
 //sameopenfile(fp1, fp2)
