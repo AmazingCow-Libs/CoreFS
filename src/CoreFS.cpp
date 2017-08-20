@@ -199,6 +199,8 @@ bool CoreFS::Exists(const std::string &path)
 //Return the last access time of a file, reported by os.stat().
 time_t CoreFS::GetATime(const std::string &filename)
 {
+    //COWNOTE(n2omatt): Trying to follow:
+    //  /usr/lib/python2.7/posixpath.py
     struct stat sb = {0};
     if(stat(filename.c_str(), &sb) != 0)
         return -1;
@@ -241,6 +243,8 @@ long int GetSize(const std::string &filename)
 
     return sb.st_size;
 }
+
+//  Defined in respective OS file.
 //bool IsAbs(const std::string &path);
 
 //Return true if the pathname refers to an existing directory.
@@ -456,10 +460,10 @@ std::string CoreFS::NormPath(const std::string &path)
 }
 
 
-//COWTODO: Implement...
+//  Defined in respective OS file.
 //std::string AbsPath(const std::string &path);
 
-//COWTODO: Implement...
+//  Defined in respective OS file.
 //std::string RelPath(const std::string &path, const std::string &start = "");
 
 //COWTODO: Implement...

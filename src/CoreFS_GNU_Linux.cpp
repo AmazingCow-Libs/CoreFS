@@ -337,7 +337,7 @@ std::string CoreFS::AbsPath(const std::string &path)
 //std::string Dirname(const std::string &path)
 
 //  Defined in CoreFS.cpp
-bool Exists(const std::string &path);
+//bool Exists(const std::string &path);
 
 std::string CoreFS::ExpandUser(const std::string &path)
 {
@@ -404,7 +404,7 @@ std::string CoreFS::ExpandUser(const std::string &path)
 //time_t GetMTime(const std::string &filename);
 
 //  Defined in CoreFS.cpp
-//unsigned long GetSize(const std::string &filename);
+//long int GetSize(const std::string &filename);
 
 //Test whether a path is absolute
 bool CoreFS::IsAbs(const std::string &path)
