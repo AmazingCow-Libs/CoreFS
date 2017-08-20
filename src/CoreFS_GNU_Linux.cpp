@@ -66,6 +66,10 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <iterator>
 
 
 ////////////////////////////////////////////////////////////////////////////////
