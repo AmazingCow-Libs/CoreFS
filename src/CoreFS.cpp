@@ -540,8 +540,39 @@ std::vector<std::string> CoreFS::SplitAll(const std::string &path)
 //COWNOTE: Not implemented
 //splitdrive(p)
 
-//COWTODO: Implement...
-//std::pair<std::string, std::string> SplitExt(const std::string &path);
+//Split the extension from a pathname.
+//  Extension is everything from the last dot to the end, ignoring
+//  leading dots.  Returns "(root, ext)"; ext may be empty.
+std::pair<std::string, std::string> CoreFS::SplitExt(const std::string &path)
+{
+    //COWNOTE(n2omatt): Trying to follow:
+    //  /usr/lib/python2.7/genericpath.py
+
+    auto last_dot_index = path.rfind('.');
+    //There's no dots on path
+    //  So there's no extension separators.
+    if(last_dot_index == std::string::npos)
+        return std::make_pair(path, "");
+
+    auto sep            = GetPathSeparator();
+    auto last_sep_index = path.rfind(sep[0]);
+
+    //The last dot happened not into final part of path.
+    if(last_dot_index < last_sep_index &&
+       last_sep_index != std::string::npos)
+    {
+        return std::make_pair(path, "");
+    }
+
+    auto filename_index = (int)last_dot_index - (int)last_sep_index -1;
+    if(filename_index <= 0)
+        return std::make_pair(path, "");
+
+    auto base = path.substr(0, last_dot_index);
+    auto ext  = path.substr(last_dot_index + 1);
+
+    return std::make_pair(base, ext);
+};
 
 //COWNOTE: Not implemented.
 //splitunc(p)

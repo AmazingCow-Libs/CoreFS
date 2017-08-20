@@ -258,7 +258,6 @@ std::pair<std::string, std::string> Split(const std::string &path);
 //  Return a vector with all path components.
 std::vector<std::string> SplitAll(const std::string &path);
 
-
 //COWNOTE: Not implemented
 //splitdrive(p)
 
