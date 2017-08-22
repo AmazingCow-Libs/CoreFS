@@ -228,7 +228,7 @@ bool LExists(const std::string &path);
 //  On Unix and Mac OS X, this returns the path unchanged;
 //  on case-insensitive filesystems, it converts the path to lowercase.
 //  On Windows, it also converts forward slashes to backward slashes.
-std::string NormCase(const std::string &path);
+std::string NormCase(const std::string &path, bool forceForwardSlashes = false);
 
 //Normalize path, eliminating double slashes, etc.
 std::string NormPath(const std::string &path);

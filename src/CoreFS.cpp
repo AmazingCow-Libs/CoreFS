@@ -378,14 +378,18 @@ std::string CoreFS::NormCase(const std::string &path)
 }
 
 //Normalize path, eliminating double slashes, etc.
-std::string CoreFS::NormPath(const std::string &path)
+
+std::string CoreFS::NormPath(
+    const std::string &path,
+    bool forceForwardSlashes /* = false */)
 {
     //COWNOTE(n2omatt): Following the implementation of:
     //  /usr/lib/python2.7/posixpath.py
     if(path.empty())
         return ".";
 
-    auto   sep             = GetPathSeparator();
+    auto   sep             = CoreFS::GetPathSeparator();
+    auto   replace_sep     = (forceForwardSlashes) ? "/" : sep;
     size_t initial_slashes = path[0] == sep[0] ? 1 : 0;
 
     if(initial_slashes != 0)
@@ -447,13 +451,14 @@ std::string CoreFS::NormPath(const std::string &path)
     //  three or more as single slash.
     initial_slashes = (initial_slashes > 2) ? 1 : initial_slashes;
     for(int i = 0; i < initial_slashes; ++i)
-        ss << sep;
+        ss << replace_sep;
+
     //Put the components
     for(int i = 0; i < components.size(); ++i)
     {
         ss << components[i];
         if(i != components.size() -1)
-            ss << sep;
+            ss << replace_sep;
     }
 
     return ss.str();
