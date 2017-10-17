@@ -1,11 +1,11 @@
 Title:
     CoreFS
 Description:
-
+    A mashup of the C# Environment class and python's os.path module.
 URL:
     Github, https://github.com/AmazingCow-Libs/CoreFS
 Owner:
     AmazingCow Labs
 Section:
-
+    Libs
 
