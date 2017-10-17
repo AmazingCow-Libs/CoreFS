@@ -40,7 +40,7 @@ As usual, you are **very welcomed** to **share** and **hack** it.
 | GetFolderPath         | Done          | Done  |
 | GetLogicalDrives      |               |       |
 |                       |               |       |
-| AbsPath               | Done          |       |
+| AbsPath               | Done          | Done  |
 | Basename              | Done          | Done  |
 | CommonPrefix          | Done          | Done  |
 | Dirname               | Done          | Done  |
@@ -50,7 +50,7 @@ As usual, you are **very welcomed** to **share** and **hack** it.
 | GetCTime              | Done          | Done  |
 | GetMTime              | Done          | Done  |
 | GetSize               | Done          | Done  |
-| IsAbs                 | Done          |       |
+| IsAbs                 | Done          | Done  |
 | IsDir                 | Done          | Done  |
 | IsFile                | Done          | Done  |
 | IsLink                |               |       |
@@ -59,7 +59,6 @@ As usual, you are **very welcomed** to **share** and **hack** it.
 | LExists               |               |       |
 | NormCase              | Done          | Done  |
 | NormPath              | Done          | Done  |
-| AbsPath               | Done          |       |
 | RelPath               | Done          |       |
 | SameFile              | Done          | Done  |
 | Split                 | Done          | Done  |
