@@ -1,3 +1,23 @@
+//~---------------------------------------------------------------------------//
+//                     _______  _______  _______  _     _                     //
+//                    |   _   ||       ||       || | _ | |                    //
+//                    |  |_|  ||       ||   _   || || || |                    //
+//                    |       ||       ||  | |  ||       |                    //
+//                    |       ||      _||  |_|  ||       |                    //
+//                    |   _   ||     |_ |       ||   _   |                    //
+//                    |__| |__||_______||_______||__| |__|                    //
+//                             www.amazingcow.com                             //
+//  File      : main.cpp                                                      //
+//  Project   : CoreFS                                                        //
+//  Date      : Aug 05, 2017                                                  //
+//  License   : GPLv3                                                         //
+//  Author    : n2omatt <n2omatt@amazingcow.com>                              //
+//  Copyright : AmazingCow - 2017                                             //
+//                                                                            //
+//  Description :                                                             //
+//                                                                            //
+//---------------------------------------------------------------------------~//
+
 #include <iostream>
 #include "CoreFS.h"
 
@@ -16,8 +36,8 @@ int main()
         std::cout << "\t" << path << std::endl;
 
     }
-    
+
 //    std::cout << CoreFS::GetFolderPath(CoreFS::SpecialFolder::MyMusic) << std::endl;
-    
+
     return 0;
 }
