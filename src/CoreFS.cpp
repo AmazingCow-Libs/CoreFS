@@ -56,6 +56,7 @@
 
 #elif _WIN32
     // Includes //
+    #include <direct.h>
 
     // Defines //
     //COWNOTE: On Windows, Microsoft did the favor to
@@ -329,7 +330,9 @@ std::string CoreFS::Join(
 //  On Unix and Mac OS X, this returns the path unchanged;
 //  on case-insensitive filesystems, it converts the path to lowercase.
 //  On Windows, it also converts forward slashes to backward slashes.
-std::string CoreFS::NormCase(const std::string &path)
+std::string CoreFS::NormCase(
+    const std::string &path,
+    bool               forceForwardSlashes /* = false */)
 {
     //On non Windows platforms, just return the path.
     #ifndef _WIN32
@@ -381,7 +384,7 @@ std::string CoreFS::NormCase(const std::string &path)
 
 std::string CoreFS::NormPath(
     const std::string &path,
-    bool forceForwardSlashes /* = false */)
+    bool               forceForwardSlashes /* = false */)
 {
     //COWNOTE(n2omatt): Following the implementation of:
     //  /usr/lib/python2.7/posixpath.py

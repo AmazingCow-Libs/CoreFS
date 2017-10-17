@@ -231,7 +231,7 @@ bool LExists(const std::string &path);
 std::string NormCase(const std::string &path, bool forceForwardSlashes = false);
 
 //Normalize path, eliminating double slashes, etc.
-std::string NormPath(const std::string &path);
+std::string NormPath(const std::string &path, bool forceForwardSlashes = false);
 
 //Return a relative version of a path
 std::string RelPath(const std::string &path, const std::string &start = ".");
