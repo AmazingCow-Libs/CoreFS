@@ -15,7 +15,7 @@
 //  Copyright : AmazingCow - 2017                                             //
 //                                                                            //
 //  Description :                                                             //
-//                                                                            //
+//    Macros used by CoreFS.                                                  //
 //---------------------------------------------------------------------------~//
 
 #pragma once

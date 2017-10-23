@@ -15,6 +15,20 @@
 //  Copyright : AmazingCow - 2017                                             //
 //                                                                            //
 //  Description :                                                             //
+//    Implementation of functions that are general enough to be               //
+//    implemented for multiple OSes                                           //
+//                                                                            //
+//    All other functions resides on:                                         //
+//      For GNU/Linux - CoreFS_GNU_Linux.cpp                                  //
+//      For Windows   - CoreFS_W32.cpp                                        //
+//      For OSX       - CoreFS_OSX.cpp                                        //
+//      ... and so on...                                                      //
+//                                                                            //
+//    But please...                                                           //
+//    ADD ALL FUNCTIONS SIGNATURES HERE (and it's proper files)               //
+//    COMMENTED OUT AND IN THE ORDER THAT IT IS DECLARED IN CoreFS.h.         //
+//    This will enable search the files very easily since the structure       //
+//    will be the same of every one of them.                                  //
 //                                                                            //
 //---------------------------------------------------------------------------~//
 
