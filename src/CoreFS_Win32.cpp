@@ -151,12 +151,6 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
     return get_folder_path_helper(folder_guid);
 }
 
-std::vector<std::string> CoreFS::GetLogicalDrives()
-{
-    //COWTODO: not implemented.
-    return std::vector<std::string>();
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Python os.path Like API                                                    //
@@ -230,8 +224,11 @@ bool CoreFS::IsAbs(const std::string &path)
 //  Defined in CoreFS.cpp
 //bool IsLink(const std::string &path);
 
-//  Defined in CoreFS.cpp
-//bool IsMount(const std::string &path);
+bool CoreFS::IsMount(const std::string &path)
+{
+    //COWTODO(n2omatt): Implement...
+    return false;
+}
 
 //  Defined in CoreFS.cpp
 //std::string Join(const std::vector<std::string> &paths);

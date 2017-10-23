@@ -133,8 +133,6 @@ std::string CoreFS::SystemDirectory()
 //  Defined in respective OS file.
 //std::string GetFolderPath(SpecialFolder folder)
 
-//  Defined in respective OS file.
-//std::vector<std::string> GetLogicalDrives()
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -268,8 +266,8 @@ bool CoreFS::IsLink(const std::string &path)
     return false;//check_stat_st_mode(path, S_IFLNK);
 }
 
-//COWTODO: Implement...
-//bool IsMount(const std::string &path);
+//  Defined in respective OS file.
+//bool IsMount(const std::string &path)
 
 //Join two (or more) paths.
 std::string CoreFS::Join(const std::vector<std::string> &paths)

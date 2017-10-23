@@ -285,11 +285,6 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
     return folder_path;
 }
 
-std::vector<std::string> CoreFS::GetLogicalDrives()
-{
-    //COWTODO: not implemented.
-    return std::vector<std::string>();
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -403,8 +398,11 @@ bool CoreFS::IsAbs(const std::string &path)
 //  Defined in CoreFS.cpp
 //bool IsLink(const std::string &path);
 
-//  Defined in CoreFS.cpp
-//bool IsMount(const std::string &path);
+bool CoreFS::IsMount(const std::string &path)
+{
+    //COWTODO(n2omatt): Implement...
+    return false;
+}
 
 //  Defined in CoreFS.cpp
 //std::string Join(const std::vector<std::string> &paths);
