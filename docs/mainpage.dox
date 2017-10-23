@@ -1,0 +1,24 @@
+/**
+@mainpage The CoreFS documentation.
+
+__CoreFS__  A C++, cross-platform mashup and implementation of the parts of
+[C# Environement](https://msdn.microsoft.com/en-us/library/system.environment.aspx)
+class and
+[python os.path](https://docs.python.org/2/library/os.path.html) module.
+
+
+You may find interesting take a look in:
+
+-  CoreFS.h class documentation - The fun is there.
+\n\n
+
+- [Project GitHub](https://www.github.com/AmazingCow-Libs/CoreFS/). \n
+- [AmazingCow FLOSS Projects](http://floss.amazingcow.com).
+
+Please report any bugs found to [help_bugs@amazingcow.com](mailto:help_bugs@amazingcow.com),
+and any questions about the project to [help_floss@amazingcow.com](mailto:help_floss@amazingcow.com)!
+
+You are __very welcomed__ to __share__ and __hack__ it.
+
+Thank you and we hope that you enjoy __CoreDir__.
+*/
