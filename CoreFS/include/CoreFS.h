@@ -55,10 +55,10 @@
 //---------------------------------------------------------------------------~//
 
 #pragma once
-//std
+// std
 #include <string>
 #include <vector>
-//CoreFS
+// CoreFS
 #include "CoreFS_Utils.h"
 
 NS_COREFS_BEGIN
