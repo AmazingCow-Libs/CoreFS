@@ -36,7 +36,7 @@
 // Version                                                                    //
 //----------------------------------------------------------------------------//
 #define COW_COREFS_VERSION_MAJOR    "0"
-#define COW_COREFS_VERSION_MINOR    "0"
+#define COW_COREFS_VERSION_MINOR    "1"
 #define COW_COREFS_VERSION_REVISION "0"
 
 #define COW_COREFS_VERSION       \
