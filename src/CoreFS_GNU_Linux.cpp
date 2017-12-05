@@ -31,25 +31,26 @@
 //---------------------------------------------------------------------------~//
 
 #ifdef __linux__
-//Header
+// Header
 #include "../include/CoreFS.h"
-//C
-#include <unistd.h>
-#include <sys/types.h>
+// C
 #include <pwd.h>
-//std
-#include <cstdlib>
-#include <string>
-#include <fstream>
+#include <sys/types.h>
+#include <unistd.h>
+// std
 #include <algorithm>
-#include <vector>
-#include <string>
+#include <cstdlib>
+#include <fstream>
 #include <iterator>
+#include <string>
+#include <string>
+#include <vector>
 
 
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
 // Helper Functions                                                           //
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 std::string _read_env(const std::string &env)
 {
     auto p_value = getenv(env.c_str());
@@ -58,31 +59,35 @@ std::string _read_env(const std::string &env)
     return p_value;
 }
 
+//------------------------------------------------------------------------------
 std::string _read_xdg_user_dir(
         const std::string &config_dir,
         const std::string &home_dir,
         const std::string &key,
         const std::string &fallback)
 {
-    //COWNOTE(n2omatt): Tried to follow the implementation at:
-    //  ./mono/mcs/class/corlib/System/Environment.cs
-    //Of the function ReadXdgUserDir
+    //--------------------------------------------------------------------------
+    // COWNOTE(n2omatt): Tried to follow the implementation at:
+    //   ./mono/mcs/class/corlib/System/Environment.cs
+    // Of the function ReadXdgUserDir
 
-    //Check if the XDG key is on environment vars first.
-    //  If so, just return it's value.
+    //--------------------------------------------------------------------------
+    // Check if the XDG key is on environment vars first.
+    //   If so, just return it's value.
     auto env_path = _read_env(key);
     if(!env_path.empty())
         return env_path;
 
-    //According with the XDG specs there's a file located
-    //on XDG_CONFIG_HOME/user-dirs.dirs that has the definitions
-    //for some "well known" directories.
+    //--------------------------------------------------------------------------
+    // According with the XDG specs there's a file located
+    // on XDG_CONFIG_HOME/user-dirs.dirs that has the definitions
+    // for some "well known" directories.
     //
-    //The specification is at:
-    //  https://www.freedesktop.org/wiki/Software/xdg-user-dirs/
+    // The specification is at:
+    //   https://www.freedesktop.org/wiki/Software/xdg-user-dirs/
     //
-    //So now, we gonna try to parse the file to check if the
-    //requested key is defined there.
+    // So now, we gonna try to parse the file to check if the
+    // requested key is defined there.
     auto full_config_path = CoreFS::Join(config_dir, {"user-dirs.dirs"});
     if(!CoreFS::Exists(full_config_path)) //There's no such file.
         return CoreFS::Join(home_dir, {fallback});
@@ -96,22 +101,25 @@ std::string _read_xdg_user_dir(
         if(line.empty())
             continue;
 
-        //The keys/values on the user-dirs.dirs file is defined to be:
-        //  XDG_XXX_DIR=$HOME/YYYY
-        //So we gonna try to get the index the current requested key
-        //plus the '=' char.
+        //----------------------------------------------------------------------
+        // The keys/values on the user-dirs.dirs file is defined to be:
+        //   XDG_XXX_DIR=$HOME/YYYY
+        // So we gonna try to get the index the current requested key
+        // plus the '=' char.
         auto key_index = line.find(key + "=");
 
-        //Not found.
+        //----------------------------------------------------------------------
+        // Not found.
         if(key_index == std::string::npos)
             continue;
 
-        //Now we have the start index of XDG_XXX_DIR key
-        //  It might be have whitespaces on the left yet,
-        //  or might start with the '#' char meaning thet
-        //  it's commented out, so we must ignore it.
-        //So check if in this range of [start_of_line, key_index)
-        //we have the '#' char.
+        //----------------------------------------------------------------------
+        // Now we have the start index of XDG_XXX_DIR key
+        //   It might be have whitespaces on the left yet,
+        //   or might start with the '#' char meaning thet
+        //   it's commented out, so we must ignore it.
+        // So check if in this range of [start_of_line, key_index)
+        // we have the '#' char.
         auto is_commented = false;
         for(int i = 0; i < key_index; ++i)
         {
@@ -125,18 +133,19 @@ std::string _read_xdg_user_dir(
         if(is_commented)
             continue;
 
-
-        //Now we're sure that even padded with whitespaces
-        //the key value is almost valid, we just need to
-        //check if we have the $HOME string.
-        //This means that path is relative, otherwise it's
-        //assumed to be on absolute form.
+        //----------------------------------------------------------------------
+        // Now we're sure that even padded with whitespaces
+        // the key value is almost valid, we just need to
+        // check if we have the $HOME string.
+        // This means that path is relative, otherwise it's
+        // assumed to be on absolute form.
         auto value_component = line.substr(
              key_index + key.size() + 1 //1 is the '=' separator.
         );
 
-        //Notice that the path is enclosed in quotes, so
-        //we need take it in account.
+        //----------------------------------------------------------------------
+        // Notice that the path is enclosed in quotes, so
+        // we need take it in account.
         auto is_relative = value_component.find("$HOME") == 1;
         auto start_index = is_relative ? 6 /* len("$HOME) == 6 */ : 1;
         auto end_index   = value_component.size() - 1;
@@ -153,24 +162,29 @@ std::string _read_xdg_user_dir(
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
 // C# System.Environment Like API                                             //
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 //  Defined at: CoreFS.cpp
 //std::string CurrentDirectory();
 
+//------------------------------------------------------------------------------
 //  Defined at: CoreFS.cpp
 //std::string NewLine()
 
+//------------------------------------------------------------------------------
 //  Defined at: CoreFS.cpp
 //std::string SystemDirectory()
 
+//------------------------------------------------------------------------------
 std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
 {
-    //COWNOTE(n2omatt):
-    //  I'm trying to follow the maximum possible the Mono implementation.
-    //  I'm referring to file:
-    //    ./mono/mcs/class/corlib/System/Environment.cs
+    //--------------------------------------------------------------------------
+    // COWNOTE(n2omatt):
+    //   I'm trying to follow the maximum possible the Mono implementation.
+    //   I'm referring to file:
+    //     ./mono/mcs/class/corlib/System/Environment.cs
 
     std::string home_dir = CoreFS::ExpandUser("~");
     std::string folder_path;
@@ -189,12 +203,14 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
         case SpecialFolder::LocalApplicationData  : folder_path = data_dir;     break;
         case SpecialFolder::CommonApplicationData : folder_path = "/usr/share"; break;
 
+        //----------------------------------------------------------------------
         // Personal / User Profile
         case SpecialFolder::Personal    :
         case SpecialFolder::UserProfile : {
             folder_path = home_dir;
         } break;
 
+        //----------------------------------------------------------------------
         // Desktop
         case SpecialFolder::Desktop          :
         case SpecialFolder::DesktopDirectory : {
@@ -204,6 +220,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
             );
         } break;
 
+        //----------------------------------------------------------------------
         // Music
         case SpecialFolder::MyMusic : {
             folder_path = _read_xdg_user_dir(
@@ -212,6 +229,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
             );
         } break;
 
+        //----------------------------------------------------------------------
         // Pictures
         case SpecialFolder::MyPictures : {
             folder_path = _read_xdg_user_dir(
@@ -220,6 +238,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
             );
         } break;
 
+        //----------------------------------------------------------------------
         // Videos
         case SpecialFolder::MyVideos: {
             folder_path = _read_xdg_user_dir(
@@ -228,6 +247,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
             );
         } break;
 
+        //----------------------------------------------------------------------
         // Templates
         case SpecialFolder::Templates: {
             folder_path = _read_xdg_user_dir(
@@ -240,12 +260,14 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
             folder_path = "/usr/share/templates";
         } break;
 
-        //Fonts
+        //----------------------------------------------------------------------
+        // Fonts
         case SpecialFolder::Fonts : {
             folder_path = CoreFS::Join(home_dir, {".fonts"});
         } break;
 
-        //Not defined on GNU/Linux.
+        //----------------------------------------------------------------------
+        // Not defined on GNU/Linux.
         case SpecialFolder::AdminTools             :
         case SpecialFolder::CDBurning              :
         case SpecialFolder::CommonAdminTools       :
@@ -287,10 +309,10 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
 
 
 
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
 // Python os.path Like API                                                    //
-////////////////////////////////////////////////////////////////////////////////
-//Return the absolute version of a path.
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 std::string CoreFS::AbsPath(const std::string &path)
 {
     //COWNOTE(n2omatt): Trying to follow the implementation of:
@@ -304,18 +326,23 @@ std::string CoreFS::AbsPath(const std::string &path)
     );
 }
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::string Basename(const std::string &path);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::string CommonPrefix(const std::initializer_list<std::string> &paths);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::string Dirname(const std::string &path)
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //bool Exists(const std::string &path);
 
+//------------------------------------------------------------------------------
 std::string CoreFS::ExpandUser(const std::string &path)
 {
     //COWNOTE(n2omatt): Following the python's os.path.expand
@@ -328,23 +355,23 @@ std::string CoreFS::ExpandUser(const std::string &path)
 
     auto first_slash_index = path.find(CoreFS::GetPathSeparator());
 
-    //There's no slashes on path.
+    // There's no slashes on path.
     if(first_slash_index == std::string::npos)
         first_slash_index = path.size();
 
     if(first_slash_index == 1) //Path is in format of: ~/something/very/nice
     {
-        //Try first get the Environment variable.
+        // Try first get the Environment variable.
         auto p_result = getenv("HOME");
         if(!p_result)
         {
-            //If it fails try to get the userhome.
+            // If it fails try to get the userhome.
             auto uid      = getuid  ();
             auto p_passwd = getpwuid(uid);
 
-            //Failed to retrieve the home path both
-            //from environment var and passwd database.
-            //  Just return the original path.
+            // Failed to retrieve the home path both
+            // from environment var and passwd database.
+            //   Just return the original path.
             if(!p_passwd)
                 return path;
 
@@ -371,58 +398,70 @@ std::string CoreFS::ExpandUser(const std::string &path)
     );
 }
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //time_t GetATime(const std::string &filename);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //time_t GetCTime(const std::string &filename);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //time_t GetMTime(const std::string &filename);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //long int GetSize(const std::string &filename);
 
-//Test whether a path is absolute
+//------------------------------------------------------------------------------
 bool CoreFS::IsAbs(const std::string &path)
 {
     return !path.empty() && path[0] == GetPathSeparator()[0];
 }
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //bool IsDir(const std::string &path);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //bool IsFile(const std::string &path);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //bool IsLink(const std::string &path);
 
+//------------------------------------------------------------------------------
 bool CoreFS::IsMount(const std::string &path)
 {
     //COWTODO(n2omatt): Implement...
     return false;
 }
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::string Join(const std::vector<std::string> &paths);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::string Join(
 //    const std::string &path,
 //    const std::vector<std::string> &paths);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //bool LExists(const std::string &path);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::string NormCase(const std::string &path);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::string NormPath(const std::string &path);
 
-
-//Return a relative version of a path
+//------------------------------------------------------------------------------
 std::string CoreFS::RelPath(
     const std::string &path,
     const std::string &start /* = "." */)
@@ -459,12 +498,15 @@ std::string CoreFS::RelPath(
     return final_path;
 }
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::pair<std::string, std::string> Split(const std::string &path);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::pair<std::string, std::string> Split(const std::string &path);
 
+//------------------------------------------------------------------------------
 //  Defined in CoreFS.cpp
 //std::pair<std::string, std::string> SplitExt(const std::string &path);
 

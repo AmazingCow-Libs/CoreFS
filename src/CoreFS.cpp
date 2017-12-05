@@ -32,55 +32,61 @@
 //                                                                            //
 //---------------------------------------------------------------------------~//
 
-//Header
+// Header
 #include "../include/CoreFS.h"
-//C
-#include <sys/types.h>
+// C
 #include <sys/stat.h>
-//std
+#include <sys/types.h>
+// std
 #include <algorithm>
 #include <cctype>
 #include <sstream>
-//CoreFS
+// CoreFS
 #include "../include/private/Macros.h"
 
+
+//------------------------------------------------------------------------------
+// Platform dependent includes and defines.
 #if __linux__
-    // Includes //
+    //--------------------------------------------------------------------------
+    // Includes
     #include <unistd.h>
 
 #elif _WIN32
-    // Includes //
+    //--------------------------------------------------------------------------
+    // Includes
     #include <direct.h>
 
-    // Defines //
-    //COWNOTE: On Windows, Microsoft did the favor to
-    //  us to make the names differently.
-    #define stat _stat
+    //--------------------------------------------------------------------------
+    // Defines
+    // COWNOTE: On Windows, Microsoft did the favor to
+    //          us to make the names differently.
+    #define stat   _stat
     #define getcwd _getcwd
 #endif
 
+//------------------------------------------------------------------------------
+// Notice:
+//   Here will be defined the functions that are very easy to implement
+//   in a multi platform way.
+//   All functions that requires deep knowledge of the OS and/or are too
+//   big will be defined on the OS's respective file.
 //
-//Notice:
-//  Here will be defined the functions that are very easy to implement
-//  in a multi platform way.
-//  All functions that requires deep knowledge of the OS and/or are too
-//  big will be defined on the OS's respective file.
+//   For GNU/Linux - CoreFS_GNU_Linux.cpp
+//   For Windows   - CoreFS_W32.cpp
+//   For OSX       - CoreFS_OSX.cpp
+//   ... and so on...
 //
-//  For GNU/Linux - CoreFS_GNU_Linux.cpp
-//  For Windows   - CoreFS_W32.cpp
-//  For OSX       - CoreFS_OSX.cpp
-//  ... and so on...
-//
-//  But please...
-//  ADD ALL FUNCTIONS SIGNATURES HERE (and it's proper files)
-//  COMMENTED OUT AND IN THE ORDER THAT IT IS DECLARED IN CoreFS.h.
-//  This will enable search the files very easily since the structure
-//  will be the same of every one of them.
+//   But please...
+//   ADD ALL FUNCTIONS SIGNATURES HERE (and it's proper files)
+//   COMMENTED OUT AND IN THE ORDER THAT IT IS DECLARED IN CoreFS.h.
+//   This will enable search the files very easily since the structure
+//   will be the same of every one of them.
 //
 
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
 // Helpers Functions                                                          //
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
 bool check_stat_st_mode(const std::string &path, unsigned mask)
 {
     struct stat sb = {0};
@@ -91,9 +97,10 @@ bool check_stat_st_mode(const std::string &path, unsigned mask)
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
 // CoreFS API                                                                 //
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 std::string CoreFS::GetPathSeparator()
 {
 #ifdef _WIN32
@@ -103,9 +110,10 @@ std::string CoreFS::GetPathSeparator()
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
 // C# System.Environment Like API                                             //
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 std::string CoreFS::CurrentDirectory()
 {
     //COWTODO: Add an assertion on the pbuf value.
@@ -117,6 +125,7 @@ std::string CoreFS::CurrentDirectory()
     return cwd;
 }
 
+//------------------------------------------------------------------------------
 std::string CoreFS::NewLine()
 {
 #ifdef _WIN32
@@ -125,23 +134,25 @@ std::string CoreFS::NewLine()
     return "\n";
 }
 
+//------------------------------------------------------------------------------
 std::string CoreFS::SystemDirectory()
 {
     return GetFolderPath(CoreFS::SpecialFolder::System);
 }
 
+//------------------------------------------------------------------------------
 //  Defined in respective OS file.
 //std::string GetFolderPath(SpecialFolder folder)
 
 
-
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
 // Python os.path Like API                                                    //
-////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 //  Defined in respective OS file.
 //std::string AbsPath(const std::string &path);
 
-//Returns the final component of a pathname
+//------------------------------------------------------------------------------
 std::string CoreFS::Basename(const std::string &path)
 {
     //COWNOTE(n2omatt): Trying to follow:
@@ -149,8 +160,7 @@ std::string CoreFS::Basename(const std::string &path)
     return CoreFS::Split(path).second;
 }
 
-//Given a list of pathnames,
-//returns the longest common leading component
+//------------------------------------------------------------------------------
 std::string CoreFS::CommonPrefix(const std::initializer_list<std::string> &paths)
 {
     //COWNOTE(n2omatt): Trying to follow:
@@ -170,7 +180,7 @@ std::string CoreFS::CommonPrefix(const std::initializer_list<std::string> &paths
     return s1;
 }
 
-//Returns the directory component of a pathname
+//------------------------------------------------------------------------------
 std::string CoreFS::Dirname(const std::string &path)
 {
     //COWNOTE(n2omatt): Trying to follow:
@@ -178,18 +188,18 @@ std::string CoreFS::Dirname(const std::string &path)
     return CoreFS::Split(path).first;
 }
 
-//Test whether a path exists.
-//  Returns False for broken symbolic links
+//------------------------------------------------------------------------------
 bool CoreFS::Exists(const std::string &path)
 {
     struct stat sb = {0};
     return stat(path.c_str(), &sb) == 0;
 }
 
+//------------------------------------------------------------------------------
 //  Defined in respective OS file.
 //std::string ExpandUser(const std::string &path);
 
-//Return the last access time of a file, reported by os.stat().
+//------------------------------------------------------------------------------
 time_t CoreFS::GetATime(const std::string &filename)
 {
     //COWNOTE(n2omatt): Trying to follow:
@@ -201,7 +211,7 @@ time_t CoreFS::GetATime(const std::string &filename)
     return sb.st_atime;
 }
 
-//Return the metadata change time of a file, reported by os.stat().
+//------------------------------------------------------------------------------
 time_t GetCTime(const std::string &filename)
 {
     //COWNOTE(n2omatt): Trying to follow:
@@ -213,7 +223,7 @@ time_t GetCTime(const std::string &filename)
     return sb.st_ctime;
 }
 
-//Return the last modification time of a file, reported by os.stat().
+//------------------------------------------------------------------------------
 time_t GetMTime(const std::string &filename)
 {
     //COWNOTE(n2omatt): Trying to follow:
@@ -225,7 +235,7 @@ time_t GetMTime(const std::string &filename)
     return sb.st_mtime;
 }
 
-//Return the size of a file, reported by os.stat().
+//------------------------------------------------------------------------------
 long int GetSize(const std::string &filename)
 {
     //COWNOTE(n2omatt): Trying to follow:
@@ -237,23 +247,23 @@ long int GetSize(const std::string &filename)
     return sb.st_size;
 }
 
+//------------------------------------------------------------------------------
 //  Defined in respective OS file.
 //bool IsAbs(const std::string &path);
 
-//Return true if the pathname refers to an existing directory.
+//------------------------------------------------------------------------------
 bool CoreFS::IsDir(const std::string &path)
 {
     return check_stat_st_mode(path, S_IFDIR);
 }
 
-//Test whether a path is a regular file
+//------------------------------------------------------------------------------
 bool CoreFS::IsFile(const std::string &path)
 {
     return check_stat_st_mode(path, S_IFREG);
 }
 
-//Test whether a path is a symbolic link.
-//This will always return false for Windows prior to 6.0.
+//------------------------------------------------------------------------------
 bool CoreFS::IsLink(const std::string &path)
 {
     //COWTODO: Check a way to implement this easier and correctly.
@@ -266,10 +276,11 @@ bool CoreFS::IsLink(const std::string &path)
     return false;//check_stat_st_mode(path, S_IFLNK);
 }
 
+//------------------------------------------------------------------------------
 //  Defined in respective OS file.
 //bool IsMount(const std::string &path)
 
-//Join two (or more) paths.
+//------------------------------------------------------------------------------
 std::string CoreFS::Join(const std::vector<std::string> &paths)
 {
     if(paths.size() == 0)
@@ -284,7 +295,7 @@ std::string CoreFS::Join(const std::vector<std::string> &paths)
     );
 }
 
-//Join two (or more) paths.
+//------------------------------------------------------------------------------
 std::string CoreFS::Join(
     const std::string &path,
     const std::vector<std::string> &paths)
@@ -313,15 +324,11 @@ std::string CoreFS::Join(
     return fullpath;
 }
 
-
+//------------------------------------------------------------------------------
 //COWTODO: Implement...
 //bool LExists(const std::string &path);
 
-
-//Normalize the case of a pathname.
-//  On Unix and Mac OS X, this returns the path unchanged;
-//  on case-insensitive filesystems, it converts the path to lowercase.
-//  On Windows, it also converts forward slashes to backward slashes.
+//------------------------------------------------------------------------------
 std::string CoreFS::NormCase(
     const std::string &path,
     bool               forceForwardSlashes /* = false */)
@@ -372,8 +379,7 @@ std::string CoreFS::NormCase(
     return norm_path;
 }
 
-//Normalize path, eliminating double slashes, etc.
-
+//------------------------------------------------------------------------------
 std::string CoreFS::NormPath(
     const std::string &path,
     bool               forceForwardSlashes /* = false */)
@@ -459,10 +465,11 @@ std::string CoreFS::NormPath(
     return ss.str();
 }
 
+//------------------------------------------------------------------------------
 //  Defined in respective OS file.
 //std::string RelPath(const std::string &path, const std::string &start = "");
 
-//Test whether two pathnames reference the same actual file
+//------------------------------------------------------------------------------
 bool CoreFS::SameFile(
     const std::string &filename1,
     const std::string &filename2)
@@ -483,15 +490,15 @@ bool CoreFS::SameFile(
         && st1.st_dev == st2.st_dev;
 }
 
+//------------------------------------------------------------------------------
 //COWNOTE: Not implemented
 //sameopenfile(fp1, fp2)
 
+//------------------------------------------------------------------------------
 //COWNOTE: Not implemented
 //samestat(s1, s2)
 
-//Split a pathname.
-//  Return tuple (head, tail) where tail is everything after the final slash.
-//  Either part may be empty.
+//------------------------------------------------------------------------------
 std::pair<std::string, std::string> CoreFS::Split(const std::string &path)
 {
     auto sep   = CoreFS::GetPathSeparator();
@@ -508,8 +515,7 @@ std::pair<std::string, std::string> CoreFS::Split(const std::string &path)
     );
 };
 
-//Split a pathname.
-//  Return a vector with all path components.
+//------------------------------------------------------------------------------
 std::vector<std::string> CoreFS::SplitAll(const std::string &path)
 {
     auto components = std::vector<std::string>();
@@ -533,12 +539,11 @@ std::vector<std::string> CoreFS::SplitAll(const std::string &path)
     return std::vector<std::string>(components.rbegin(), components.rend());
 }
 
+//------------------------------------------------------------------------------
 //COWNOTE: Not implemented
 //splitdrive(p)
 
-//Split the extension from a pathname.
-//  Extension is everything from the last dot to the end, ignoring
-//  leading dots.  Returns "(root, ext)"; ext may be empty.
+//------------------------------------------------------------------------------
 std::pair<std::string, std::string> CoreFS::SplitExt(const std::string &path)
 {
     //COWNOTE(n2omatt): Trying to follow:
@@ -570,5 +575,6 @@ std::pair<std::string, std::string> CoreFS::SplitExt(const std::string &path)
     return std::make_pair(base, ext);
 };
 
+//------------------------------------------------------------------------------
 //COWNOTE: Not implemented.
 //splitunc(p)
