@@ -3,10 +3,17 @@ project(clion)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(../../include)
+include_directories(../../)
+
 set(SOURCE_FILES
-        ../../include/CoreFS.h
-        ../../include/CoreFS_Utils.h
-        ../../src/CoreFS.cpp
-        main.cpp ../../src/CoreFS_GNU_Linux.cpp ../../include/private/Macros.h)
+    ../../CoreFS/CoreFS.h
+    ../../CoreFS/include/CoreFS.h
+    ../../CoreFS/include/CoreFS_Utils.h
+    ../../CoreFS/include/private/Macros.h
+    ../../CoreFS/src/CoreFS.cpp
+    ../../CoreFS/src/CoreFS_GNU_Linux.cpp
+    ../../CoreFS/src/CoreFS_Win32.cpp
+    main.cpp
+)
+
 add_executable(clion ${SOURCE_FILES})

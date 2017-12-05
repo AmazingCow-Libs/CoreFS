@@ -19,7 +19,7 @@
 //---------------------------------------------------------------------------~//
 
 #include <iostream>
-#include "CoreFS.h"
+#include "CoreFS/CoreFS.h"
 
 int main()
 {
