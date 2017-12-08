@@ -212,7 +212,7 @@ time_t CoreFS::GetATime(const std::string &filename)
 }
 
 //------------------------------------------------------------------------------
-time_t GetCTime(const std::string &filename)
+time_t CoreFS::GetCTime(const std::string &filename)
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -224,7 +224,7 @@ time_t GetCTime(const std::string &filename)
 }
 
 //------------------------------------------------------------------------------
-time_t GetMTime(const std::string &filename)
+time_t CoreFS::GetMTime(const std::string &filename)
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -236,7 +236,7 @@ time_t GetMTime(const std::string &filename)
 }
 
 //------------------------------------------------------------------------------
-long int GetSize(const std::string &filename)
+long int CoreFS::GetSize(const std::string &filename)
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
