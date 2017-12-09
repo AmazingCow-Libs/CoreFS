@@ -185,7 +185,6 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
     //   I'm trying to follow the maximum possible the Mono implementation.
     //   I'm referring to file:
     //     ./mono/mcs/class/corlib/System/Environment.cs
-
     std::string home_dir = CoreFS::ExpandUser("~");
     std::string folder_path;
 

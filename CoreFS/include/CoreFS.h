@@ -286,6 +286,9 @@ bool IsLink(const std::string &path);
 /// @warning NOT IMPLEMENTED YET!
 bool IsMount(const std::string &path);
 
+
+//COWTODO(n2omatt): Add a variadic template overload for Join.
+
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Join two (or more) paths.
