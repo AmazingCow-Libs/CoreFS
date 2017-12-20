@@ -18,6 +18,12 @@
 //                                                                            //
 //---------------------------------------------------------------------------~//
 
+//------------------------------------------------------------------------------
+// Makes easier to users include the whole CoreString repository directory
+// and yet let us define some "tests"...
+#define COREFS_TESTS_ENABLED 0
+#if COREFS_TESTS_ENABLED
+
 #include <iostream>
 #include "CoreFS/CoreFS.h"
 
@@ -41,3 +47,5 @@ int main()
 
     return 0;
 }
+
+#endif // #if COREFS_TESTS_ENABLED
