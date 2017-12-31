@@ -35,6 +35,7 @@
 // Header
 #include "../include/CoreFS.h"
 // C
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 // std
@@ -108,6 +109,70 @@ std::string CoreFS::GetPathSeparator()
 #endif
     return "/";
 }
+
+
+
+//----------------------------------------------------------------------------//
+// C# System.Path Like API                                                    //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+std::string CoreFS::ChangeExtension(
+    const std::string &path,
+    const std::string &newExt)
+{
+    if(path.empty())
+        return path;
+
+    auto split = CoreFS::SplitExt(path);
+
+    if(newExt.empty()) // Remove extension.
+        return split.first;
+
+    if(newExt[0] != '.')
+        return split.first + "." + newExt;
+
+    return split.first + newExt;
+}
+
+//------------------------------------------------------------------------------
+std::string CoreFS::GetExtension(const std::string &path)
+{
+    return CoreFS::SplitExt(path).second;
+}
+
+//------------------------------------------------------------------------------
+/// @brief
+///   Returns a random folder name or file name.
+std::string CoreFS::GetRandomFileName()
+{
+    //COWTODO(n2omatt): Implement...
+}
+
+//------------------------------------------------------------------------------
+std::string CoreFS::GetTempFileName()
+{
+    char buffer[L_tmpnam];
+
+    if(tmpnam_r(buffer) == nullptr) // Cannot generate the filename.
+        return "";
+
+    FILE* p_file = fopen(buffer, "rw+");
+    if(!p_file) // Cannot open the file with generated filename.
+        return "";
+
+    return std::string(buffer);
+}
+
+//------------------------------------------------------------------------------
+//  Defined in respective OS file.
+// std::string CoreFS::GetTempPath()
+
+//------------------------------------------------------------------------------
+bool CoreFS::HasExtension(const std::string &path)
+{
+    return !CoreFS::SplitExt(path).second.empty();
+}
+
 
 
 //----------------------------------------------------------------------------//

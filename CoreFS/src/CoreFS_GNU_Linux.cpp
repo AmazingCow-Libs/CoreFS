@@ -163,6 +163,41 @@ std::string _read_xdg_user_dir(
 
 
 //----------------------------------------------------------------------------//
+// C# System.Path Like API                                                    //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+//  Defined at: CoreFS.cpp
+//std::string CoreFS::ChangeExtension(
+
+//------------------------------------------------------------------------------
+//  Defined at: CoreFS.cpp
+//std::string CoreFS::GetExtension(const std::string &path)
+
+//------------------------------------------------------------------------------
+//  Defined at: CoreFS.cpp
+//std::string CoreFS::GetRandomFileName()
+
+//------------------------------------------------------------------------------
+//  Defined at: CoreFS.cpp
+//std::string CoreFS::GetTempFileName()
+
+//------------------------------------------------------------------------------
+std::string CoreFS::GetTempPath()
+{
+    // Reference:
+    //   http://www.tldp.org/LDP/Linux-Filesystem-Hierarchy/html/tmp.html
+    //   https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.swg.im.iis.repl.qrepl.doc/topics/iiyrqenvtempdir.html
+    auto temp_dir = _read_env("TMPDIR");
+    if(temp_dir.empty())
+        return "/tmp";
+}
+
+//------------------------------------------------------------------------------
+//  Defined at: CoreFS.cpp
+//bool CoreFS::HasExtension(const std::string &path)
+
+
+//----------------------------------------------------------------------------//
 // C# System.Environment Like API                                             //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------

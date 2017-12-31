@@ -127,6 +127,41 @@ std::string GetPathSeparator();
 
 
 //----------------------------------------------------------------------------//
+// C# System.Path Like API                                                    //
+//----------------------------------------------------------------------------//
+///-----------------------------------------------------------------------------
+/// @brief
+///   Changes the extension of a path string.
+std::string ChangeExtension(const std::string &path, const std::string &newExt);
+
+///-----------------------------------------------------------------------------
+/// @brief
+///   Returns the extension of the specified path string.
+std::string GetExtension(const std::string &path);
+
+///-----------------------------------------------------------------------------
+/// @brief
+///   Returns a random folder name or file name.
+std::string GetRandomFileName();
+
+///-----------------------------------------------------------------------------
+/// @brief
+///   Creates a uniquely named, zero-byte temporary file on disk and
+///   returns the full path of that file.
+std::string GetTempFileName();
+
+///-----------------------------------------------------------------------------
+/// @brief
+///   Returns the path of the current user's temporary folder.
+std::string GetTempPath();
+
+///-----------------------------------------------------------------------------
+/// @brief
+///   Determines whether a path includes a file name extension.
+bool HasExtension(const std::string &path);
+
+
+//----------------------------------------------------------------------------//
 // C# System.Environment Like API                                             //
 //----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
