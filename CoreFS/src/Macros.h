@@ -12,7 +12,7 @@
 //  Date      : Aug 05, 2017                                                  //
 //  License   : GPLv3                                                         //
 //  Author    : n2omatt <n2omatt@amazingcow.com>                              //
-//  Copyright : AmazingCow - 2017                                             //
+//  Copyright : AmazingCow - 2017, 2018                                       //
 //                                                                            //
 //  Description :                                                             //
 //    Macros used by CoreFS.                                                  //
@@ -29,3 +29,43 @@
         (_ptr_) = nullptr;      \
     }                           \
 } while(0);
+
+
+
+//----------------------------------------------------------------------------//
+// OSes                                                                       //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+// BSDs
+#define COREFS_IS_BSD \
+      BSD          || \
+    __FreeBSD__    || \
+    __NetBSD__     || \
+    __OpenBSD__    || \
+    __bsdi__       || \
+    __DragonFly__
+
+//------------------------------------------------------------------------------
+// GNU/Linux
+#define COREFS_IS_GNU_LINUX \
+    __gnu_linux__       ||  \
+    __linux__
+
+//------------------------------------------------------------------------------
+// OSX
+#define COREFS_IS_OSX \
+    __APPLE__      && \
+    __MACH__
+
+//------------------------------------------------------------------------------
+// Windows
+#define COREFS_IS_WINDOWS \
+    _WIN32
+
+//------------------------------------------------------------------------------
+// UNIX
+#define COREFS_IS_UNIX     \
+    COREFS_IS_BSD       || \
+    COREFS_IS_GNU_LINUX || \
+    COREFS_IS_OSX
+

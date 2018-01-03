@@ -9,7 +9,7 @@ set(SOURCE_FILES
     ../../CoreFS/CoreFS.h
     ../../CoreFS/include/CoreFS.h
     ../../CoreFS/include/CoreFS_Utils.h
-    ../../CoreFS/include/private/Macros.h
+    ../../CoreFS/src/Macros.h
     ../../CoreFS/src/CoreFS.cpp
     ../../CoreFS/src/CoreFS_GNU_Linux.cpp
     ../../CoreFS/src/CoreFS_Win32.cpp
