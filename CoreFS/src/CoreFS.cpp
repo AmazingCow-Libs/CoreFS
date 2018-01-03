@@ -12,7 +12,7 @@
 //  Date      : Aug 01, 2017                                                  //
 //  License   : GPLv3                                                         //
 //  Author    : n2omatt <n2omatt@amazingcow.com>                              //
-//  Copyright : AmazingCow - 2017                                             //
+//  Copyright : AmazingCow - 2017, 2018                                       //
 //                                                                            //
 //  Description :                                                             //
 //    Implementation of functions that are general enough to be               //
@@ -43,17 +43,17 @@
 #include <cctype>
 #include <sstream>
 // CoreFS
-#include "../include/private/Macros.h"
+#include "Macros.h"
 
 
 //------------------------------------------------------------------------------
 // Platform dependent includes and defines.
-#if __linux__
+#if COREFS_IS_UNIX
     //--------------------------------------------------------------------------
     // Includes
     #include <unistd.h>
 
-#elif _WIN32
+#elif COREFS_IS_WINDOWS
     //--------------------------------------------------------------------------
     // Includes
     #include <direct.h>
@@ -64,7 +64,8 @@
     //          us to make the names differently.
     #define stat   _stat
     #define getcwd _getcwd
-#endif
+#endif // COREFS_IS_UNIX
+
 
 //------------------------------------------------------------------------------
 // Notice:
@@ -146,6 +147,7 @@ std::string CoreFS::GetExtension(const std::string &path)
 std::string CoreFS::GetRandomFileName()
 {
     //COWTODO(n2omatt): Implement...
+    return "";
 }
 
 //------------------------------------------------------------------------------
@@ -153,7 +155,7 @@ std::string CoreFS::GetTempFileName()
 {
     char buffer[L_tmpnam];
 
-    if(tmpnam_r(buffer) == nullptr) // Cannot generate the filename.
+    if(tmpnam(buffer) == nullptr) // Cannot generate the filename.
         return "";
 
     FILE* p_file = fopen(buffer, "rw+");
