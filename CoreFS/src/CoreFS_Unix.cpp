@@ -7,15 +7,15 @@
 //                    |   _   ||     |_ |       ||   _   |                    //
 //                    |__| |__||_______||_______||__| |__|                    //
 //                             www.amazingcow.com                             //
-//  File      : CoreFS_GNU_Linux.cpp                                          //
+//  File      : CoreFS_Unix.cpp                                               //
 //  Project   : CoreFS                                                        //
-//  Date      : Aug 05, 2017                                                  //
+//  Date      : Jan 02, 2018                                                  //
 //  License   : GPLv3                                                         //
 //  Author    : n2omatt <n2omatt@amazingcow.com>                              //
-//  Copyright : AmazingCow - 2017                                             //
+//  Copyright : AmazingCow - 2018                                             //
 //                                                                            //
 //  Description :                                                             //
-//    Implementation of the functions for GNU/Linux OS.                       //
+//    Implementation of the functions for Unix OSes.                          //
 //    All other functions resides on:                                         //
 //      For GNU/Linux - CoreFS_GNU_Linux.cpp                                  //
 //      For Windows   - CoreFS_W32.cpp                                        //
@@ -30,7 +30,10 @@
 //                                                                            //
 //---------------------------------------------------------------------------~//
 
-#ifdef __linux__
+// Defines which OS we're...
+#include "Macros.h"
+
+#if COREFS_IS_UNIX
 // Header
 #include "../include/CoreFS.h"
 // C
@@ -58,6 +61,7 @@ std::string _read_env(const std::string &env)
         return "";
     return p_value;
 }
+
 
 //------------------------------------------------------------------------------
 std::string _read_xdg_user_dir(
@@ -161,7 +165,6 @@ std::string _read_xdg_user_dir(
     return CoreFS::Join(home_dir, {fallback});
 }
 
-
 //----------------------------------------------------------------------------//
 // C# System.Path Like API                                                    //
 //----------------------------------------------------------------------------//
@@ -213,6 +216,8 @@ std::string CoreFS::GetTempPath()
 //std::string SystemDirectory()
 
 //------------------------------------------------------------------------------
+// OSX has it's own way to get the paths.
+#if !(COREFS_IS_OSX)
 std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
 {
     //--------------------------------------------------------------------------
@@ -251,6 +256,14 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
             folder_path = _read_xdg_user_dir(
                config_dir, home_dir,
                "XDG_DESKTOP_DIR", "Desktop"
+            );
+        } break;
+
+        //----------------------------------------------------------------------
+        case SpecialFolder::MyDocuments : {
+            folder_path = _read_xdg_user_dir(
+                config_dir, home_dir,
+                "XDG_DOCUMENTS_DIR", "Documents"
             );
         } break;
 
@@ -340,7 +353,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
 
     return folder_path;
 }
-
+#endif // !COREFS_IS_OSX
 
 
 //----------------------------------------------------------------------------//
@@ -544,4 +557,4 @@ std::string CoreFS::RelPath(
 //  Defined in CoreFS.cpp
 //std::pair<std::string, std::string> SplitExt(const std::string &path);
 
-#endif //__linux__
+#endif // COREFS_IS_UNIX
