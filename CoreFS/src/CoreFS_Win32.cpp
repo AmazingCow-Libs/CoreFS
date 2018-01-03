@@ -12,7 +12,7 @@
 //  Date      : Aug 01, 2017                                                  //
 //  License   : GPLv3                                                         //
 //  Author    : n2omatt <n2omatt@amazingcow.com>                              //
-//  Copyright : AmazingCow - 2017                                             //
+//  Copyright : AmazingCow - 2017, 2018                                       //
 //                                                                            //
 //  Description :                                                             //
 //    Implementation of the functions for Windows OS.                         //
@@ -30,7 +30,10 @@
 //                                                                            //
 //---------------------------------------------------------------------------~//
 
-#ifdef _WIN32
+// Defines which OS we're...
+#include "Macros.h"
+
+#if COREFS_IS_WINDOWS
 // Header
 #include "../include/CoreFS.h"
 // std
