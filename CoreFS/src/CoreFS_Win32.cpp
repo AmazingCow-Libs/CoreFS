@@ -105,9 +105,13 @@ std::string get_folder_path_helper(GUID folderGUID)
 //std::string CoreFS::GetTempFileName()
 
 //------------------------------------------------------------------------------
+#ifdef GetTempPath
+	#undef GetTempPath
+#endif
 std::string CoreFS::GetTempPath()
 {
     // COWTODO(n2omatt): Implement...
+	return "";
 }
 
 //------------------------------------------------------------------------------
