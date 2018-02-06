@@ -42,18 +42,19 @@
 #include <algorithm>
 #include <cctype>
 #include <sstream>
-// CoreFS
-#include "Macros.h"
+// Amazing Cow Libs
+#include "acow/cpp_goodies.h"
+
 
 
 //------------------------------------------------------------------------------
 // Platform dependent includes and defines.
-#if COREFS_IS_UNIX
+#if ACOW_OS_IS_UNIX
     //--------------------------------------------------------------------------
     // Includes
     #include <unistd.h>
 
-#elif COREFS_IS_WINDOWS
+#elif ACOW_OS_IS_WINDOWS
     //--------------------------------------------------------------------------
     // Includes
     #include <direct.h>
@@ -65,6 +66,14 @@
     #define stat   _stat
     #define getcwd _getcwd
 #endif // COREFS_IS_UNIX
+
+
+#define SAFE_FREE(_ptr_) do {   \
+    if((_ptr_) != nullptr) {    \
+        free((_ptr_));          \
+        (_ptr_) = nullptr;      \
+    }                           \
+} while(0);
 
 
 //------------------------------------------------------------------------------
@@ -105,7 +114,7 @@ bool check_stat_st_mode(const std::string &path, unsigned mask)
 //------------------------------------------------------------------------------
 std::string CoreFS::GetPathSeparator()
 {
-#ifdef _WIN32
+#if ACOW_OS_IS_WINDOWS
     return "\\";
 #endif
     return "/";

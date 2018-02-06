@@ -30,10 +30,11 @@
 //                                                                            //
 //---------------------------------------------------------------------------~//
 
-// Defines which OS we're...
-#include "Macros.h"
+// Amazing Cow Libs
+#include "acow/cpp_goodies.h"
 
-#if COREFS_IS_UNIX
+#if ACOW_OS_IS_UNIX
+
 // Header
 #include "../include/CoreFS.h"
 // C
@@ -557,4 +558,4 @@ std::string CoreFS::RelPath(
 //  Defined in CoreFS.cpp
 //std::pair<std::string, std::string> SplitExt(const std::string &path);
 
-#endif // COREFS_IS_UNIX
+#endif // ACOW_OS_IS_UNIX
