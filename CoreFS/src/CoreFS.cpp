@@ -49,12 +49,12 @@
 
 //------------------------------------------------------------------------------
 // Platform dependent includes and defines.
-#if ACOW_OS_IS_UNIX
+#if (ACOW_OS_IS_UNIX)
     //--------------------------------------------------------------------------
     // Includes
     #include <unistd.h>
 
-#elif ACOW_OS_IS_WINDOWS
+#elif (ACOW_OS_IS_WINDOWS)
     //--------------------------------------------------------------------------
     // Includes
     #include <direct.h>

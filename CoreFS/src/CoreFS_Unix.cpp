@@ -33,7 +33,7 @@
 // Amazing Cow Libs
 #include "acow/cpp_goodies.h"
 
-#if ACOW_OS_IS_UNIX
+#if (ACOW_OS_IS_UNIX)
 
 // Header
 #include "../include/CoreFS.h"
@@ -558,4 +558,4 @@ std::string CoreFS::RelPath(
 //  Defined in CoreFS.cpp
 //std::pair<std::string, std::string> SplitExt(const std::string &path);
 
-#endif // ACOW_OS_IS_UNIX
+#endif // #if (ACOW_OS_IS_UNIX)
