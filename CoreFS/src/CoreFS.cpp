@@ -120,6 +120,10 @@ std::string CoreFS::GetPathSeparator()
     return "/";
 }
 
+std::string CoreFS::ExpandUserAndMakeAbs(const std::string &path) noexcept
+{
+    return CoreFS::AbsPath(CoreFS::ExpandUser(path));
+}
 
 
 //----------------------------------------------------------------------------//

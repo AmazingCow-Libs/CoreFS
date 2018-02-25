@@ -126,6 +126,11 @@ enum class SpecialFolder {
 ///   Gets the path separator for the platform.
 std::string GetPathSeparator();
 
+///-----------------------------------------------------------------------------
+/// @brief
+///   Just a wrapper to CoreFS::AbsPath(CoreFS::ExpandUser(path));
+std::string ExpandUserAndMakeAbs(const std::string &path) noexcept;
+
 
 //----------------------------------------------------------------------------//
 // C# System.Path Like API                                                    //
