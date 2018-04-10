@@ -29,8 +29,8 @@ project(CoreFile)
 ## Sources.
 add_library(CoreFS
     CoreFS/src/CoreFS.cpp
-    CoreFS/src/CoreFS_Unix.cpp
-    CoreFS/src/CoreFS_Win32.cpp
+    CoreFS/src/private/win32_functions.cpp
+    CoreFS/src/private/unix_functions.cpp
 )
 
 
