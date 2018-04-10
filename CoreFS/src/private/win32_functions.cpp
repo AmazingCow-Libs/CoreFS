@@ -43,7 +43,7 @@
 #include <direct.h>
 #include <Shlobj.h>
 #include <Shlwapi.h>
-#define WINDOWS_LEAN_AND_MEAN  
+#define WIN32_LEAN_AND_MEAN
 #define _WINSOCKAPI_
 #include <Windows.h>
 #include <Lmcons.h> // For UNLEN (GetUserName)
