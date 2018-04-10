@@ -36,14 +36,20 @@
 #if (ACOW_OS_IS_WINDOWS)
 
 // Header
-#include "../include/CoreFS.h"
+#include "os_functions.h"
 // std
 #include <string>
 // Windows
 #include <direct.h>
 #include <Shlobj.h>
 #include <Shlwapi.h>
+#define WINDOWS_LEAN_AND_MEAN  
+#define _WINSOCKAPI_
 #include <Windows.h>
+#include <Lmcons.h> // For UNLEN (GetUserName)
+// AmazingCow Libs
+#include "acow/cpp_goodies.h"
+#include "CoreAssert/CoreAssert.h"
 
 
 //----------------------------------------------------------------------------//
@@ -56,7 +62,8 @@
 // Helper Functions                                                           //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-std::string to_std_string(PWSTR pwstr)
+acow_internal_function std::string 
+to_std_string(PWSTR pwstr) noexcept
 {
     std::wstring wstr(pwstr);
     std::string   str(wstr.begin(), wstr.end());
@@ -65,7 +72,8 @@ std::string to_std_string(PWSTR pwstr)
 }
 
 //------------------------------------------------------------------------------
-std::string get_folder_path_helper(GUID folderGUID)
+acow_internal_function std::string 
+get_folder_path_helper(GUID folderGUID) noexcept
 {
     PWSTR p_buf;
 
@@ -87,58 +95,26 @@ std::string get_folder_path_helper(GUID folderGUID)
 
 
 //----------------------------------------------------------------------------//
-// C# System.Path Like API                                                    //
+// Implementation Functions												      //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CoreFS::ChangeExtension(
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CoreFS::GetExtension(const std::string &path)
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CoreFS::GetRandomFileName()
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CoreFS::GetTempFileName()
-
-//------------------------------------------------------------------------------
-#ifdef GetTempPath
-	#undef GetTempPath
-#endif
-std::string CoreFS::GetTempPath()
+std::string 
+os_GetTempPath() noexcept
 {
-    // COWTODO(n2omatt): Implement...
-	return "";
+    // COWTODO(n2omatt): Bullet proof the function.
+    //   See Remarks section about the failures points.
+    //   https://msdn.microsoft.com/en-us/library/windows/desktop/aa364992(v=vs.85).aspx
+    char buffer[MAX_PATH] = {0};
+    GetTempPath(MAX_PATH, buffer);
+
+    return {buffer};
 }
 
 //------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//bool CoreFS::HasExtension(const std::string &path)
-
-
-//----------------------------------------------------------------------------//
-// C# System.Environment Like API                                             //
-//----------------------------------------------------------------------------//
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string CurrentDirectory()
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string NewLine()
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CoreFS::SystemDirectory();
-
-//------------------------------------------------------------------------------
-std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
+std::string 
+os_GetFolderPath(CoreFS::SpecialFolder folder) noexcept
 {
-    //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
     // References:
     //  SHGetKnownFolderPath
     //    https://msdn.microsoft.com/en-us/library/windows/desktop/bb762188(v=vs.85).aspx
@@ -201,14 +177,11 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
     return get_folder_path_helper(folder_guid);
 }
 
-
-//----------------------------------------------------------------------------//
-// Python os.path Like API                                                    //
-//----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-std::string CoreFS::AbsPath(const std::string &path)
+std::string 
+os_GetAbsPath(const std::string &path) noexcept
 {
-    //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
     // Reference:
     //   https://msdn.microsoft.com/en-us/library/windows/desktop/aa364963(v=vs.85).aspx
 
@@ -231,110 +204,71 @@ std::string CoreFS::AbsPath(const std::string &path)
 }
 
 //------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string Basename(const std::string &path);
+std::string 
+os_GetUserHome(const std::string &username) noexcept
+{     
+    //--------------------------------------------------------------------------
+    // COWHACK(n2omatt): Get the CURRENT user name.
+    //   This is needed because we don't find a way to get the other users
+    //   directory correctly (or easily) on Windows. 
+    //   So on the same user we do the right thing - That's call the 
+    //   function that actually gets the home folder.
+    //   But if the username is other the the current user, we do a hack
+    //   assuming that this correct. First we get the current user home directory, 
+    //   then we strip the username part and replace with the target user.
+    //   Sincerely I don't know if this is correctly, but now we gonna user that 
+    //   anyways...
 
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string CommonPrefix(const std::initializer_list<std::string> &paths);
+    // COWTODO(n2omatt): Bullet proof this...
+    //   See the return values section to check what can be wrong.
+    //   https://msdn.microsoft.com/en-us/library/windows/desktop/ms724432%28v=vs.85%29.aspx
+    DWORD username_buf_size              = UNLEN +1;
+    char  current_username_buf[UNLEN +1] = {0};
+    GetUserName(current_username_buf, &username_buf_size);
 
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string Dirname(const std::string &path)
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool Exists(const std::string &path);
-
-//------------------------------------------------------------------------------
-std::string CoreFS::ExpandUser(const std::string &path)
-{
-    //COWTODO(n2omatt): Implement...
-    return "";
+    // Get the CURRENT user home folder.
+    auto current_user_home = os_GetFolderPath(CoreFS::SpecialFolder::UserProfile);
+    // Same user - Straight forward...
+    if(username.empty() ||  username == current_username_buf) { 
+        return CoreFS::AbsPath(current_user_home);
+    } 
+    // Other user - we need do some hacks...
+    else { 
+        current_user_home     = CoreFS::AbsPath(current_user_home);
+        auto base_home        = CoreFS::Dirname(current_user_home);
+        auto target_user_home = CoreFS::Join(base_home, {username});
+        
+        if(CoreFS::IsDir(target_user_home)) 
+            return target_user_home;
+        
+        return "";
+    }
 }
 
 //------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//time_t GetATime(const std::string &filename);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//time_t GetCTime(const std::string &filename);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//time_t GetMTime(const std::string &filename);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//long int GetSize(const std::string &filename);
-
-//------------------------------------------------------------------------------
-bool CoreFS::IsAbs(const std::string &path)
+bool 
+os_IsAbs(const std::string &path) noexcept
 {
-    return !PathIsRelativeA(path.c_str());
+	return !PathIsRelativeA(path.c_str());
 }
 
 //------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool IsDir(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool IsFile(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool IsLink(const std::string &path);
-
-//------------------------------------------------------------------------------
-bool CoreFS::IsMount(const std::string &path)
+bool 
+os_IsMount(const std::string &path) noexcept
 {
-    //COWTODO(n2omatt): Implement...
-    return false;
+	throw CoreAssert::NotImplementedException(__FUNCTION__);
+	return false;
 }
 
 //------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string Join(const std::vector<std::string> &paths);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string Join(
-//    const std::string &path,
-//    const std::vector<std::string> &paths);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool LExists(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string NormCase(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string NormPath(const std::string &path);
-
-//------------------------------------------------------------------------------
-std::string CoreFS::RelPath(
-    const std::string &path,
-    const std::string &start /* = "." */)
+std::string 
+os_RelPath(
+	const std::string &path,
+	const std::string &start) noexcept
 {
-    //COWTODO(n2omatt): Implement...
-    return "";
+	throw CoreAssert::NotImplementedException(__FUNCTION__);
+	return "";
 }
 
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::pair<std::string, std::string> Split(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::pair<std::string, std::string> Split(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::pair<std::string, std::string> SplitExt(const std::string &path);
 
 #endif // #if (ACOW_OS_IS_WINDOWS)

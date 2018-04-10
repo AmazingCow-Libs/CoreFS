@@ -44,7 +44,8 @@
 #include <sstream>
 // Amazing Cow Libs
 #include "acow/cpp_goodies.h"
-
+// CoreFS
+#include "private/os_functions.h"
 
 
 //------------------------------------------------------------------------------
@@ -65,15 +66,13 @@
     //          us to make the names differently.
     #define stat   _stat
     #define getcwd _getcwd
+
+    #undef GetTempFileName
+    #undef GetTempPath
+    #undef min
+    #undef max
 #endif // COREFS_IS_UNIX
 
-
-#define SAFE_FREE(_ptr_) do {   \
-    if((_ptr_) != nullptr) {    \
-        free((_ptr_));          \
-        (_ptr_) = nullptr;      \
-    }                           \
-} while(0);
 
 
 //------------------------------------------------------------------------------
@@ -98,7 +97,8 @@
 //----------------------------------------------------------------------------//
 // Helpers Functions                                                          //
 //----------------------------------------------------------------------------//
-bool check_stat_st_mode(const std::string &path, unsigned mask)
+acow_internal_function bool 
+check_stat_st_mode(const std::string &path, unsigned mask) noexcept
 {
     struct stat sb = {0};
     if(stat(path.c_str(), &sb) != 0)
@@ -112,15 +112,17 @@ bool check_stat_st_mode(const std::string &path, unsigned mask)
 // CoreFS API                                                                 //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-std::string CoreFS::GetPathSeparator()
+std::string 
+CoreFS::GetPathSeparator() noexcept
 {
-#if ACOW_OS_IS_WINDOWS
+#if (ACOW_OS_IS_WINDOWS)
     return "\\";
 #endif
     return "/";
 }
 
-std::string CoreFS::ExpandUserAndMakeAbs(const std::string &path) noexcept
+std::string 
+CoreFS::ExpandUserAndMakeAbs(const std::string &path) noexcept
 {
     return CoreFS::AbsPath(CoreFS::ExpandUser(path));
 }
@@ -130,9 +132,10 @@ std::string CoreFS::ExpandUserAndMakeAbs(const std::string &path) noexcept
 // C# System.Path Like API                                                    //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-std::string CoreFS::ChangeExtension(
+std::string 
+CoreFS::ChangeExtension(
     const std::string &path,
-    const std::string &newExt)
+    const std::string &newExt) noexcept
 {
     if(path.empty())
         return path;
@@ -149,7 +152,8 @@ std::string CoreFS::ChangeExtension(
 }
 
 //------------------------------------------------------------------------------
-std::string CoreFS::GetExtension(const std::string &path)
+std::string 
+CoreFS::GetExtension(const std::string &path) noexcept
 {
     return CoreFS::SplitExt(path).second;
 }
@@ -157,14 +161,17 @@ std::string CoreFS::GetExtension(const std::string &path)
 //------------------------------------------------------------------------------
 /// @brief
 ///   Returns a random folder name or file name.
-std::string CoreFS::GetRandomFileName()
+std::string 
+CoreFS::GetRandomFileName() noexcept
 {
-    //COWTODO(n2omatt): Implement...
+    // COWTODO(n2omatt): Implement...
+	throw CoreAssert::NotImplementedException(__FUNCTION__);
     return "";
 }
 
 //------------------------------------------------------------------------------
-std::string CoreFS::GetTempFileName()
+std::string 
+CoreFS::GetTempFileName() noexcept
 {
     char buffer[L_tmpnam];
 
@@ -179,11 +186,15 @@ std::string CoreFS::GetTempFileName()
 }
 
 //------------------------------------------------------------------------------
-//  Defined in respective OS file.
-// std::string CoreFS::GetTempPath()
+std::string 
+CoreFS::GetTempPath() noexcept
+{
+	return os_GetTempPath();
+}
 
 //------------------------------------------------------------------------------
-bool CoreFS::HasExtension(const std::string &path)
+bool 
+CoreFS::HasExtension(const std::string &path) noexcept
 {
     return !CoreFS::SplitExt(path).second.empty();
 }
@@ -194,46 +205,55 @@ bool CoreFS::HasExtension(const std::string &path)
 // C# System.Environment Like API                                             //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-std::string CoreFS::CurrentDirectory()
+std::string 
+CoreFS::CurrentDirectory() noexcept
 {
-    //COWTODO: Add an assertion on the pbuf value.
+    // COWTODO: Add an assertion on the pbuf value.
     auto p_buf = getcwd(nullptr, 0);
     auto cwd   = std::string(p_buf);
 
-    SAFE_FREE(p_buf);
-
+    ACOW_SAFE_FREE(p_buf);
     return cwd;
 }
 
 //------------------------------------------------------------------------------
-std::string CoreFS::NewLine()
+std::string 
+CoreFS::NewLine() noexcept
 {
-#ifdef _WIN32
+#if (ACOW_OS_IS_WINDOWS)
     return "\r\n";
 #endif
     return "\n";
 }
 
 //------------------------------------------------------------------------------
-std::string CoreFS::SystemDirectory()
+std::string 
+CoreFS::SystemDirectory() noexcept
 {
     return GetFolderPath(CoreFS::SpecialFolder::System);
 }
 
 //------------------------------------------------------------------------------
-//  Defined in respective OS file.
-//std::string GetFolderPath(SpecialFolder folder)
+std::string 
+CoreFS::GetFolderPath(SpecialFolder folder) noexcept
+{
+	return os_GetFolderPath(folder);
+}
 
 
 //----------------------------------------------------------------------------//
 // Python os.path Like API                                                    //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-//  Defined in respective OS file.
-//std::string AbsPath(const std::string &path);
+std::string 
+CoreFS::AbsPath(const std::string &path) noexcept
+{
+	return os_GetAbsPath(path);
+}
 
 //------------------------------------------------------------------------------
-std::string CoreFS::Basename(const std::string &path)
+std::string 
+CoreFS::Basename(const std::string &path) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -241,7 +261,8 @@ std::string CoreFS::Basename(const std::string &path)
 }
 
 //------------------------------------------------------------------------------
-std::string CoreFS::CommonPrefix(const std::initializer_list<std::string> &paths)
+std::string 
+CoreFS::CommonPrefix(const std::initializer_list<std::string> &paths) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -251,7 +272,7 @@ std::string CoreFS::CommonPrefix(const std::initializer_list<std::string> &paths
     auto s1 = std::min(paths);
     auto s2 = std::max(paths);
 
-    for(int i = 0; i < s1.size(); ++i)
+    for(size_t i = 0; i < s1.size(); ++i)
     {
         if(s1[i] != s2[i])
             return s1.substr(0, i);
@@ -261,7 +282,8 @@ std::string CoreFS::CommonPrefix(const std::initializer_list<std::string> &paths
 }
 
 //------------------------------------------------------------------------------
-std::string CoreFS::Dirname(const std::string &path)
+std::string 
+CoreFS::Dirname(const std::string &path) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -269,18 +291,49 @@ std::string CoreFS::Dirname(const std::string &path)
 }
 
 //------------------------------------------------------------------------------
-bool CoreFS::Exists(const std::string &path)
+bool 
+CoreFS::Exists(const std::string &path) noexcept
 {
     struct stat sb = {0};
     return stat(path.c_str(), &sb) == 0;
 }
 
 //------------------------------------------------------------------------------
-//  Defined in respective OS file.
-//std::string ExpandUser(const std::string &path);
+std::string 
+CoreFS::ExpandUser(const std::string &path) noexcept
+{
+	//COWNOTE(n2omatt): Following the python's os.path.expand
+    //  user located at: /usr/lib/python2.7/posixpath.py
+    if(path.size() == 0 || path[0] != '~')
+        return path;
+
+    std::string home_path;
+    auto norm_path         = CoreFS::NormCase(path, true);
+    auto first_slash_index = norm_path.find(CoreFS::GetPathSeparator());
+
+    // There's no slashes on path.
+    if(first_slash_index == std::string::npos)
+        first_slash_index = path.size();
+
+    // Path is in format of: ~/something/very/nice
+    if(first_slash_index == 1) {
+        home_path = os_GetUserHome();
+    }
+    // Path is in format of: ~some_user/something/very/nice
+    else {
+        auto username = path.substr(1, first_slash_index);
+        home_path     = os_GetUserHome(username);
+    }
+
+    return CoreFS::Join(
+        home_path,
+        {path.substr(first_slash_index, path.size() - first_slash_index)}
+    );
+}
 
 //------------------------------------------------------------------------------
-time_t CoreFS::GetATime(const std::string &filename)
+time_t 
+CoreFS::GetATime(const std::string &filename) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -292,7 +345,8 @@ time_t CoreFS::GetATime(const std::string &filename)
 }
 
 //------------------------------------------------------------------------------
-time_t CoreFS::GetCTime(const std::string &filename)
+time_t 
+CoreFS::GetCTime(const std::string &filename) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -304,7 +358,8 @@ time_t CoreFS::GetCTime(const std::string &filename)
 }
 
 //------------------------------------------------------------------------------
-time_t CoreFS::GetMTime(const std::string &filename)
+time_t 
+CoreFS::GetMTime(const std::string &filename) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -316,7 +371,8 @@ time_t CoreFS::GetMTime(const std::string &filename)
 }
 
 //------------------------------------------------------------------------------
-long int CoreFS::GetSize(const std::string &filename)
+long int 
+CoreFS::GetSize(const std::string &filename) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -328,23 +384,29 @@ long int CoreFS::GetSize(const std::string &filename)
 }
 
 //------------------------------------------------------------------------------
-//  Defined in respective OS file.
-//bool IsAbs(const std::string &path);
+bool 
+CoreFS::IsAbs(const std::string &path) noexcept
+{
+	return os_IsAbs(path);
+}
 
 //------------------------------------------------------------------------------
-bool CoreFS::IsDir(const std::string &path)
+bool 
+CoreFS::IsDir(const std::string &path) noexcept
 {
     return check_stat_st_mode(path, S_IFDIR);
 }
 
 //------------------------------------------------------------------------------
-bool CoreFS::IsFile(const std::string &path)
+bool 
+CoreFS::IsFile(const std::string &path) noexcept
 {
     return check_stat_st_mode(path, S_IFREG);
 }
 
 //------------------------------------------------------------------------------
-bool CoreFS::IsLink(const std::string &path)
+bool 
+CoreFS::IsLink(const std::string &path) noexcept
 {
     //COWTODO: Check a way to implement this easier and correctly.
     //  The windows sdk doesn't provides the S_IFLNK mask, but
@@ -353,15 +415,20 @@ bool CoreFS::IsLink(const std::string &path)
     //  I think that the value should be stable enought to use
     //  it here, since it, by its nature, can't change often.
     //  So make a research about it, and continue the implementation.
-    return false;//check_stat_st_mode(path, S_IFLNK);
+	throw CoreAssert::NotImplementedException(__FUNCTION__);
+    return false;// check_stat_st_mode(path, S_IFLNK);
 }
 
 //------------------------------------------------------------------------------
-//  Defined in respective OS file.
-//bool IsMount(const std::string &path)
+bool 
+CoreFS::IsMount(const std::string &path) noexcept
+{
+	return os_IsMount(path);
+}
 
 //------------------------------------------------------------------------------
-std::string CoreFS::Join(const std::vector<std::string> &paths)
+std::string 
+CoreFS::Join(const std::vector<std::string> &paths) noexcept
 {
     if(paths.size() == 0)
         return "";
@@ -376,9 +443,10 @@ std::string CoreFS::Join(const std::vector<std::string> &paths)
 }
 
 //------------------------------------------------------------------------------
-std::string CoreFS::Join(
+std::string 
+CoreFS::Join(
     const std::string &path,
-    const std::vector<std::string> &paths)
+    const std::vector<std::string> &paths) noexcept
 {
     auto fullpath = path;
     auto sep      = GetPathSeparator();
@@ -409,14 +477,15 @@ std::string CoreFS::Join(
 //bool LExists(const std::string &path);
 
 //------------------------------------------------------------------------------
-std::string CoreFS::NormCase(
+std::string 
+CoreFS::NormCase(
     const std::string &path,
-    bool               forceForwardSlashes /* = false */)
+    bool               forceForwardSlashes /* = false */) noexcept
 {
-    //On non Windows platforms, just return the path.
-    #ifndef _WIN32
-    return path;
-    #endif //ifndef _WIN32
+    // On non Windows platforms, just return the path.
+    #if (!ACOW_OS_IS_WINDOWS)
+        return path;
+    #endif // #if (!ACOW_OS_IS_WINDOIWS)
 
     auto norm_path  = path;
 
@@ -460,9 +529,10 @@ std::string CoreFS::NormCase(
 }
 
 //------------------------------------------------------------------------------
-std::string CoreFS::NormPath(
+std::string 
+CoreFS::NormPath(
     const std::string &path,
-    bool               forceForwardSlashes /* = false */)
+    bool               forceForwardSlashes /* = false */) noexcept
 {
     //COWNOTE(n2omatt): Following the implementation of:
     //  /usr/lib/python2.7/posixpath.py
@@ -531,11 +601,11 @@ std::string CoreFS::NormPath(
     //  POSIX allows one or two initial slashes, but treats
     //  three or more as single slash.
     initial_slashes = (initial_slashes > 2) ? 1 : initial_slashes;
-    for(int i = 0; i < initial_slashes; ++i)
+    for(size_t i = 0; i < initial_slashes; ++i)
         ss << replace_sep;
 
     //Put the components
-    for(int i = 0; i < components.size(); ++i)
+    for(size_t i = 0; i < components.size(); ++i)
     {
         ss << components[i];
         if(i != components.size() -1)
@@ -546,13 +616,17 @@ std::string CoreFS::NormPath(
 }
 
 //------------------------------------------------------------------------------
-//  Defined in respective OS file.
-//std::string RelPath(const std::string &path, const std::string &start = "");
+std::string 
+RelPath(const std::string &path, const std::string &start = "") noexcept
+{
+	return os_RelPath(path, start);
+}
 
 //------------------------------------------------------------------------------
-bool CoreFS::SameFile(
+bool 
+CoreFS::SameFile(
     const std::string &filename1,
-    const std::string &filename2)
+    const std::string &filename2) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/posixpath.py
@@ -579,7 +653,8 @@ bool CoreFS::SameFile(
 //samestat(s1, s2)
 
 //------------------------------------------------------------------------------
-std::pair<std::string, std::string> CoreFS::Split(const std::string &path)
+std::pair<std::string, std::string> 
+CoreFS::Split(const std::string &path) noexcept
 {
     auto sep   = CoreFS::GetPathSeparator();
     auto index = path.rfind(sep);
@@ -596,7 +671,8 @@ std::pair<std::string, std::string> CoreFS::Split(const std::string &path)
 };
 
 //------------------------------------------------------------------------------
-std::vector<std::string> CoreFS::SplitAll(const std::string &path)
+std::vector<std::string> 
+CoreFS::SplitAll(const std::string &path) noexcept
 {
     auto components = std::vector<std::string>();
     auto curr_path  = path;
@@ -624,7 +700,8 @@ std::vector<std::string> CoreFS::SplitAll(const std::string &path)
 //splitdrive(p)
 
 //------------------------------------------------------------------------------
-std::pair<std::string, std::string> CoreFS::SplitExt(const std::string &path)
+std::pair<std::string, std::string> 
+CoreFS::SplitExt(const std::string &path) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow:
     //  /usr/lib/python2.7/genericpath.py
