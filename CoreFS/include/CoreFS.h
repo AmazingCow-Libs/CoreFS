@@ -124,7 +124,7 @@ enum class SpecialFolder {
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Gets the path separator for the platform.
-std::string GetPathSeparator();
+std::string GetPathSeparator() noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -138,33 +138,35 @@ std::string ExpandUserAndMakeAbs(const std::string &path) noexcept;
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Changes the extension of a path string.
-std::string ChangeExtension(const std::string &path, const std::string &newExt);
+std::string ChangeExtension(
+	const std::string &path, 
+	const std::string &newExt) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Returns the extension of the specified path string.
-std::string GetExtension(const std::string &path);
+std::string GetExtension(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Returns a random folder name or file name.
-std::string GetRandomFileName();
+std::string GetRandomFileName() noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Creates a uniquely named, zero-byte temporary file on disk and
 ///   returns the full path of that file.
-std::string GetTempFileName();
+std::string GetTempFileName() noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Returns the path of the current user's temporary folder.
-std::string GetTempPath();
+std::string GetTempPath() noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Determines whether a path includes a file name extension.
-bool HasExtension(const std::string &path);
+bool HasExtension(const std::string &path) noexcept;
 
 
 //----------------------------------------------------------------------------//
@@ -173,18 +175,18 @@ bool HasExtension(const std::string &path);
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Gets the fully qualified path of the current working directory.
-std::string CurrentDirectory();
+std::string CurrentDirectory() noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Gets the newline string defined for this environment.
-std::string NewLine();
+std::string NewLine() noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Gets the fully qualified path of the system directory.
 ///   Same as GetFolderPath(SpecialFolder::System);
-std::string SystemDirectory();
+std::string SystemDirectory() noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -202,7 +204,7 @@ std::string SystemDirectory();
 ///   does.
 /// @returns
 ///   The fully qualified path for the given folder.
-std::string GetFolderPath(SpecialFolder folder);
+std::string GetFolderPath(SpecialFolder folder) noexcept;
 
 
 //----------------------------------------------------------------------------//
@@ -213,28 +215,28 @@ std::string GetFolderPath(SpecialFolder folder);
 ///   Return the absolute version of a path.
 /// @param path
 ///   The path that will be mapped.
-std::string AbsPath(const std::string &path);
+std::string AbsPath(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Returns the final component of a pathname.
 /// @param path
 ///   The path that will be mapped.
-std::string Basename(const std::string &path);
+std::string Basename(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Given a list of pathnames, returns the longest common leading component.
 /// @param paths
 ///   The paths that will be tested.
-std::string CommonPrefix(const std::initializer_list<std::string> &paths);
+std::string CommonPrefix(const std::initializer_list<std::string> &paths) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Returns the directory component of a pathname
 /// @param path
 ///   The path that will be mapped.
-std::string Dirname(const std::string &path);
+std::string Dirname(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -245,7 +247,7 @@ std::string Dirname(const std::string &path);
 ///   Returns False for broken symbolic links
 /// @returns
 ///   True if path exists, false otherwise.
-bool Exists(const std::string &path);
+bool Exists(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -254,7 +256,7 @@ bool Exists(const std::string &path);
 /// @returns
 ///   The path with with the ~ and ~user constructs expanded
 ///   or the unmodified path if it cannot be expanded.
-std::string ExpandUser(const std::string &path);
+std::string ExpandUser(const std::string &path) noexcept;
 
 //COWTODO: Check if we gonna implement this.
 //expandvars(const std::string &path)
@@ -264,49 +266,49 @@ std::string ExpandUser(const std::string &path);
 ///   Return the last access time of a file, reported by os.stat().
 /// @param filename
 ///   The filename that will be tested.
-time_t GetATime(const std::string &filename);
+time_t GetATime(const std::string &filename) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return the metadata change time of a file, reported by os.stat().
 /// @param filename
 ///   The filename that will be tested.
-time_t GetCTime(const std::string &filename);
+time_t GetCTime(const std::string &filename) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return the last modification time of a file, reported by os.stat().
 /// @param filename
 ///   The filename that will be tested.
-time_t GetMTime(const std::string &filename);
+time_t GetMTime(const std::string &filename) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return the size of a file, reported by os.stat().
 /// @param filename
 ///   The filename that will be tested.
-long int GetSize(const std::string &filename);
+long int GetSize(const std::string &filename) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Test whether a path is absolute
 /// @param path
 ///   The path that will be tested.
-bool IsAbs(const std::string &path);
+bool IsAbs(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///    Return true if the pathname refers to an existing directory.
 /// @param path
 ///   The path that will be tested.
-bool IsDir(const std::string &path);
+bool IsDir(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Test whether a path is a regular file
 /// @param path
 ///   The path that will be tested.
-bool IsFile(const std::string &path);
+bool IsFile(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -316,7 +318,7 @@ bool IsFile(const std::string &path);
 /// @note
 ///    This will always return false for Windows prior to 6.0.
 /// @warning NOT IMPLEMENTED YET!
-bool IsLink(const std::string &path);
+bool IsLink(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -325,7 +327,7 @@ bool IsLink(const std::string &path);
 /// @param path
 ///   The path that will be tested.
 /// @warning NOT IMPLEMENTED YET!
-bool IsMount(const std::string &path);
+bool IsMount(const std::string &path) noexcept;
 
 
 //COWTODO(n2omatt): Add a variadic template overload for Join.
@@ -335,7 +337,7 @@ bool IsMount(const std::string &path);
 ///   Join two (or more) paths.
 /// @param paths
 ///   A list of paths that will be joined.
-std::string Join(const std::vector<std::string> &paths);
+std::string Join(const std::vector<std::string> &paths) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -346,7 +348,7 @@ std::string Join(const std::vector<std::string> &paths);
 ///   The rest of path components.
 std::string Join(
     const std::string &path,
-    const std::vector<std::string> &paths);
+    const std::vector<std::string> &paths) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -355,7 +357,7 @@ std::string Join(
 ///   Returns True for broken symbolic links
 /// @param path
 ///   The path that will be tested.
-bool LExists(const std::string &path);
+bool LExists(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -367,7 +369,9 @@ bool LExists(const std::string &path);
 ///   The path that will be normalized.
 /// @param forceForwardSlashes
 ///   On Windows makes the path use the '/' instead of '\'
-std::string NormCase(const std::string &path, bool forceForwardSlashes = false);
+std::string NormCase(
+	const std::string &path, 
+	bool forceForwardSlashes = false) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -376,7 +380,9 @@ std::string NormCase(const std::string &path, bool forceForwardSlashes = false);
 ///   The path that will be normalized.
 /// @param forceForwardSlashes
 ///   On Windows makes the path use the '/' instead of '\'
-std::string NormPath(const std::string &path, bool forceForwardSlashes = false);
+std::string NormPath(
+	const std::string &path, 
+	bool forceForwardSlashes = false) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -385,12 +391,16 @@ std::string NormPath(const std::string &path, bool forceForwardSlashes = false);
 ///   The path that will be mapped
 /// @param start
 ///   The start point to map the relative path.
-std::string RelPath(const std::string &path, const std::string &start = ".");
+std::string RelPath(
+	const std::string &path, 
+	const std::string &start = ".") noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Test whether two pathnames reference the same actual file
-bool SameFile(const std::string &filename1, const std::string &filename2);
+bool SameFile(
+	const std::string &filename1, 
+	const std::string &filename2) noexcept;
 
 //COWNOTE: Not implemented
 //sameopenfile(fp1, fp2)
@@ -406,7 +416,7 @@ bool SameFile(const std::string &filename1, const std::string &filename2);
 /// @returns
 ///   A tuple (head, tail) where tail is everything after the final slash.
 ///   Either part may be empty.
-std::pair<std::string, std::string> Split(const std::string &path);
+std::pair<std::string, std::string> Split(const std::string &path) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -415,7 +425,7 @@ std::pair<std::string, std::string> Split(const std::string &path);
 ///   The path that will be split.
 /// @returns
 ///   A vector with all path components.
-std::vector<std::string> SplitAll(const std::string &path);
+std::vector<std::string> SplitAll(const std::string &path) noexcept;
 
 //COWNOTE: Not implemented
 //splitdrive(p)
@@ -429,7 +439,7 @@ std::vector<std::string> SplitAll(const std::string &path);
 ///   The path that will be split.
 /// @returns
 ///   "(root, ext)"; ext may be empty.
-std::pair<std::string, std::string> SplitExt(const std::string &path);
+std::pair<std::string, std::string> SplitExt(const std::string &path) noexcept;
 
 //COWNOTE: Not implemented.
 //splitunc(p)
