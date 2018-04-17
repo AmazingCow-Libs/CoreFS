@@ -7,8 +7,8 @@
 //                    |   _   ||     |_ |       ||   _   |                    //
 //                    |__| |__||_______||_______||__| |__|                    //
 //                             www.amazingcow.com                             //
-//  File      : CoreFS_Unix.cpp                                               //
-//  Project   : CoreFS                                                        //
+//  File      : Path_Unix.cpp                                               //
+//  Project   : Path                                                        //
 //  Date      : Jan 02, 2018                                                  //
 //  License   : GPLv3                                                         //
 //  Author    : n2omatt <n2omatt@amazingcow.com>                              //
@@ -17,14 +17,14 @@
 //  Description :                                                             //
 //    Implementation of the functions for Unix OSes.                          //
 //    All other functions resides on:                                         //
-//      For GNU/Linux - CoreFS_GNU_Linux.cpp                                  //
-//      For Windows   - CoreFS_W32.cpp                                        //
-//      For OSX       - CoreFS_OSX.cpp                                        //
+//      For GNU/Linux - Path_GNU_Linux.cpp                                  //
+//      For Windows   - Path_W32.cpp                                        //
+//      For OSX       - Path_OSX.cpp                                        //
 //      ... and so on...                                                      //
 //                                                                            //
 //    But please...                                                           //
 //    ADD ALL FUNCTIONS SIGNATURES HERE (and it's proper files)               //
-//    COMMENTED OUT AND IN THE ORDER THAT IT IS DECLARED IN CoreFS.h.         //
+//    COMMENTED OUT AND IN THE ORDER THAT IT IS DECLARED IN Path.h.         //
 //    This will enable search the files very easily since the structure       //
 //    will be the same of every one of them.                                  //
 //                                                                            //
@@ -36,7 +36,7 @@
 #if (ACOW_OS_IS_UNIX)
 
 // Header
-#include "../include/CoreFS.h"
+#include "os_functions.h"
 // C
 #include <pwd.h>
 #include <sys/types.h>
@@ -55,17 +55,17 @@
 // Helper Functions                                                           //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-std::string _read_env(const std::string &env)
+acow_internal_function std::string
+_read_env(const std::string &env) noexcept
 {
-    auto p_value = getenv(env.c_str());
-    if(!p_value)
-        return "";
-    return p_value;
+    auto p_value = acow_getenv(env.c_str());
+    return (p_value) p_value : "";
 }
 
 
 //------------------------------------------------------------------------------
-std::string _read_xdg_user_dir(
+acow_internal_function std::string
+_read_xdg_user_dir(
         const std::string &config_dir,
         const std::string &home_dir,
         const std::string &key,
@@ -80,8 +80,7 @@ std::string _read_xdg_user_dir(
     // Check if the XDG key is on environment vars first.
     //   If so, just return it's value.
     auto env_path = _read_env(key);
-    if(!env_path.empty())
-        return env_path;
+    if(!env_path.empty()) { return env_path; }
 
     //--------------------------------------------------------------------------
     // According with the XDG specs there's a file located
@@ -93,18 +92,17 @@ std::string _read_xdg_user_dir(
     //
     // So now, we gonna try to parse the file to check if the
     // requested key is defined there.
-    auto full_config_path = CoreFS::Join(config_dir, {"user-dirs.dirs"});
-    if(!CoreFS::Exists(full_config_path)) //There's no such file.
-        return CoreFS::Join(home_dir, {fallback});
+    auto full_config_path = Path::Join(config_dir, {"user-dirs.dirs"});
+    if(!Path::Exists(full_config_path)) { // There's no such file.
+        return Path::Join(home_dir, {fallback});
+    }
 
     std::ifstream in_file(full_config_path, std::ios::in);
-    while(!in_file.eof())
-    {
+    while(!in_file.eof()) {
         std::string line;
         std::getline(in_file, line);
 
-        if(line.empty())
-            continue;
+        if(line.empty()) { continue; }
 
         //----------------------------------------------------------------------
         // The keys/values on the user-dirs.dirs file is defined to be:
@@ -115,8 +113,7 @@ std::string _read_xdg_user_dir(
 
         //----------------------------------------------------------------------
         // Not found.
-        if(key_index == std::string::npos)
-            continue;
+        if(key_index == std::string::npos) { continue; }
 
         //----------------------------------------------------------------------
         // Now we have the start index of XDG_XXX_DIR key
@@ -126,17 +123,14 @@ std::string _read_xdg_user_dir(
         // So check if in this range of [start_of_line, key_index)
         // we have the '#' char.
         auto is_commented = false;
-        for(int i = 0; i < key_index; ++i)
-        {
-            if(line[i] == '#')
-            {
+        for(int i = 0; i < key_index; ++i) {
+            if(line[i] == '#') {
                 is_commented = true;
                 break;
             }
         }
 
-        if(is_commented)
-            continue;
+        if(is_commented) { continue; }
 
         //----------------------------------------------------------------------
         // Now we're sure that even padded with whitespaces
@@ -157,88 +151,54 @@ std::string _read_xdg_user_dir(
 
         auto path = value_component.substr(start_index, end_index - start_index);
 
-        if(is_relative)
-            return CoreFS::Join(home_dir, {path});
-
-        return path;
+        return (is_relative)
+            ? Path::Join(home_dir, {path})
+            : path
     }
 
-    return CoreFS::Join(home_dir, {fallback});
+    return Path::Join(home_dir, {fallback});
 }
 
+
 //----------------------------------------------------------------------------//
-// C# System.Path Like API                                                    //
+// Implementation Functions                                                   //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CoreFS::ChangeExtension(
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CoreFS::GetExtension(const std::string &path)
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CoreFS::GetRandomFileName()
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CoreFS::GetTempFileName()
-
-//------------------------------------------------------------------------------
-std::string CoreFS::GetTempPath()
+std::string
+_private::OS_GetTempPath() noexcept
 {
     // Reference:
     //   http://www.tldp.org/LDP/Linux-Filesystem-Hierarchy/html/tmp.html
     //   https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.swg.im.iis.repl.qrepl.doc/topics/iiyrqenvtempdir.html
     auto temp_dir = _read_env("TMPDIR");
-    if(temp_dir.empty())
-        return "/tmp";
+    return (temp_dir.empty()) ? "/tmp" : temp_dir;
 }
 
 //------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//bool CoreFS::HasExtension(const std::string &path)
-
-
-//----------------------------------------------------------------------------//
-// C# System.Environment Like API                                             //
-//----------------------------------------------------------------------------//
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string CurrentDirectory();
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string NewLine()
-
-//------------------------------------------------------------------------------
-//  Defined at: CoreFS.cpp
-//std::string SystemDirectory()
-
-//------------------------------------------------------------------------------
 // OSX has it's own way to get the paths.
-#if !(COREFS_IS_OSX)
-std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
+#if !(ACOW_OS_IS_OSX)
+std::string
+_private::OS_GetFolderPath(Path::SpecialFolder folder) noexcept
 {
     //--------------------------------------------------------------------------
     // COWNOTE(n2omatt):
     //   I'm trying to follow the maximum possible the Mono implementation.
     //   I'm referring to file:
     //     ./mono/mcs/class/corlib/System/Environment.cs
-    std::string home_dir = CoreFS::ExpandUser("~");
+    std::string home_dir = Path::ExpandUser("~");
     std::string folder_path;
 
     auto data_dir = _read_env("XDG_DATA_HOME");
-    if(data_dir.empty())
-        data_dir = CoreFS::Join(home_dir, {".local", "share"});
+    if(data_dir.empty()) {
+        data_dir = Path::Join(home_dir, {".local", "share"});
+    }
 
     auto config_dir = _read_env("XDG_CONFIG_HOME");
-    if(config_dir.empty())
-        config_dir = CoreFS::Join(home_dir, {".config"});
+    if(config_dir.empty()) {
+        config_dir = Path::Join(home_dir, {".config"});
+    }
 
-    switch(folder)
-    {
+    switch(folder) {
         case SpecialFolder::ApplicationData       : folder_path = config_dir;   break;
         case SpecialFolder::LocalApplicationData  : folder_path = data_dir;     break;
         case SpecialFolder::CommonApplicationData : folder_path = "/usr/share"; break;
@@ -311,7 +271,7 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
         //----------------------------------------------------------------------
         // Fonts
         case SpecialFolder::Fonts : {
-            folder_path = CoreFS::Join(home_dir, {".fonts"});
+            folder_path = Path::Join(home_dir, {".fonts"});
         } break;
 
         //----------------------------------------------------------------------
@@ -351,68 +311,48 @@ std::string CoreFS::GetFolderPath(CoreFS::SpecialFolder folder)
         case SpecialFolder::InternetCache          :
             break;
     }
-
     return folder_path;
 }
-#endif // !COREFS_IS_OSX
+#endif // !Path_IS_OSX
 
 
-//----------------------------------------------------------------------------//
-// Python os.path Like API                                                    //
-//----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-std::string CoreFS::AbsPath(const std::string &path)
+std::string
+_private::OS_GetAbsPath(const std::string &path) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow the implementation of:
     //  /usr/lib/python2.7/posixpath.py
-    if(CoreFS::IsAbs(path))
-        return CoreFS::NormPath(path);
+    if(Path::IsAbs(path)) {
+        return Path::NormPath(path);
+    }
 
-    return CoreFS::Join(
-        CoreFS::CurrentDirectory(),
+    return Path::Join(
+        Path::CurrentDirectory(),
         {path}
     );
 }
 
 //------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string Basename(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string CommonPrefix(const std::initializer_list<std::string> &paths);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string Dirname(const std::string &path)
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool Exists(const std::string &path);
-
-//------------------------------------------------------------------------------
-std::string CoreFS::ExpandUser(const std::string &path)
+std::string
+_private::OS_GetUserHome(const std::string &username) noexcept
 {
     //COWNOTE(n2omatt): Following the python's os.path.expand
     //  user located at: /usr/lib/python2.7/posixpath.py
 
-    if(path.size() == 0 || path[0] != '~')
-        return path;
+    if(path.size() == 0 || path[0] != '~') { return path; }
 
     std::string home_path;
-
-    auto first_slash_index = path.find(CoreFS::GetPathSeparator());
+    auto first_slash_index = path.find(Path::GetPathSeparator());
 
     // There's no slashes on path.
-    if(first_slash_index == std::string::npos)
+    if(first_slash_index == std::string::npos) {
         first_slash_index = path.size();
+    }
 
-    if(first_slash_index == 1) //Path is in format of: ~/something/very/nice
-    {
+    if(first_slash_index == 1) { // Path is in format of: ~/something/very/nice
         // Try first get the Environment variable.
         auto p_result = getenv("HOME");
-        if(!p_result)
-        {
+        if(!p_result) {
             // If it fails try to get the userhome.
             auto uid      = getuid  ();
             auto p_passwd = getpwuid(uid);
@@ -420,118 +360,61 @@ std::string CoreFS::ExpandUser(const std::string &path)
             // Failed to retrieve the home path both
             // from environment var and passwd database.
             //   Just return the original path.
-            if(!p_passwd)
-                return path;
-
+            if(!p_passwd) { return path; }
             p_result = p_passwd->pw_dir;
         }
-
         home_path = p_result;
-    }
-    else //Path is in format of: ~some_user/something/very/nice
-    {
+    } else { //Path is in format of: ~some_user/something/very/nice
         auto username = path.substr(1, first_slash_index);
         auto p_passwd = getpwnam(username.c_str());
 
         //User not found...
-        if(!p_passwd)
-            return path;
-
+        if(!p_passwd) { return path; }
         home_path = p_passwd->pw_dir;
     }
 
-    return CoreFS::Join(
+    return Path::Join(
         home_path,
         {path.substr(first_slash_index, path.size() - first_slash_index)}
     );
 }
 
 //------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//time_t GetATime(const std::string &filename);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//time_t GetCTime(const std::string &filename);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//time_t GetMTime(const std::string &filename);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//long int GetSize(const std::string &filename);
-
-//------------------------------------------------------------------------------
-bool CoreFS::IsAbs(const std::string &path)
+bool
+_private::OS_IsAbs(const std::string &path) noexcept
 {
-    return !path.empty() && path[0] == GetPathSeparator()[0];
+    return !path.empty() && path[0] == Path::GetPathSeparator()[0];
 }
 
 //------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool IsDir(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool IsFile(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool IsLink(const std::string &path);
-
-//------------------------------------------------------------------------------
-bool CoreFS::IsMount(const std::string &path)
+bool
+_private::OS_IsMount(const std::string &path) noexcept
 {
-    //COWTODO(n2omatt): Implement...
+    ACOW_NOT_IMPLEMENTED();
     return false;
 }
 
 //------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string Join(const std::vector<std::string> &paths);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string Join(
-//    const std::string &path,
-//    const std::vector<std::string> &paths);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//bool LExists(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string NormCase(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::string NormPath(const std::string &path);
-
-//------------------------------------------------------------------------------
-std::string CoreFS::RelPath(
+std::string
+_private::OS_RelPath(
     const std::string &path,
-    const std::string &start /* = "." */)
+    const std::string &start) noexcept
 {
     //COWNOTE(n2omatt): Trying to follow the implementation of:
     //  /usr/lib/python2.7/posixpath.py
-    auto abs_path  = CoreFS::AbsPath(path);
-    auto abs_start = CoreFS::AbsPath(start);
+    auto abs_path  = Path::AbsPath(path);
+    auto abs_start = Path::AbsPath(start);
 
-    auto path_comps  = CoreFS::SplitAll(abs_path);
-    auto start_comps = CoreFS::SplitAll(abs_start);
+    auto path_comps  = Path::SplitAll(abs_path);
+    auto start_comps = Path::SplitAll(abs_start);
 
     //Work out how much of the filepath is shared by start and path.
     auto i = 0;
-    for(;;++i)
-    {
+    for(;;++i) {
         //COWHACK(n2omatt): Must have a std algorithm to get the
         //position at the ranges differ.
-        if(i >= path_comps.size() || i >= start_comps.size())
-            break;
-        if(path_comps[i] != start_comps[i])
-            break;
+        if(i >= path_comps.size() || i >= start_comps.size()) { break };
+        if(path_comps[i] != start_comps[i])                   { break };
     }
 
     auto double_dots_count = start_comps.size() - i;
@@ -542,20 +425,8 @@ std::string CoreFS::RelPath(
         std::back_inserter(final_comps)
     );
 
-    auto final_path = CoreFS::Join(final_comps);
+    auto final_path = Path::Join(final_comps);
     return final_path;
 }
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::pair<std::string, std::string> Split(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::pair<std::string, std::string> Split(const std::string &path);
-
-//------------------------------------------------------------------------------
-//  Defined in CoreFS.cpp
-//std::pair<std::string, std::string> SplitExt(const std::string &path);
 
 #endif // #if (ACOW_OS_IS_UNIX)

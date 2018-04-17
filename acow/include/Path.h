@@ -59,67 +59,14 @@
 #include <string>
 #include <vector>
 #include <ctime>
-// CoreFS
-#include "CoreFS_Utils.h"
+// acow_IO
+#include "SpecialFolder.h"
+#include "IO_Utils.h"
 
-NS_COREFS_BEGIN
-
-//----------------------------------------------------------------------------//
-// Enums / Constants / Typedefs                                               //
-//----------------------------------------------------------------------------//
-enum class SpecialFolder {
-    AdminTools,
-    ApplicationData,
-    CDBurning,
-    CommonAdminTools,
-    CommonApplicationData,
-    CommonDesktopDirectory,
-    CommonDocuments,
-    CommonMusic,
-    CommonOemLinks,
-    CommonPictures,
-    CommonProgramFiles,
-    CommonProgramFilesX86,
-    CommonPrograms,
-    CommonStartMenu,
-    CommonStartup,
-    CommonTemplates,
-    CommonVideos,
-    Cookies,
-    Desktop,
-    DesktopDirectory,
-    Favorites,
-    Fonts,
-    History,
-    InternetCache,
-    LocalApplicationData,
-    LocalizedResources,
-    MyComputer,
-    MyDocuments,
-    MyMusic,
-    MyPictures,
-    MyVideos,
-    NetworkShortcuts,
-    Personal,
-    PrinterShortcuts,
-    ProgramFiles,
-    ProgramFilesX86,
-    Programs,
-    Recent,
-    Resources,
-    SendTo,
-    StartMenu,
-    Startup,
-    System,
-    SystemX86,
-    Templates,
-    UserProfile,
-    Windows
-};
-
+namespace acow { namespace IO { namespace Path {
 
 //----------------------------------------------------------------------------//
-// CoreFS API                                                                 //
+// acow_IO API                                                                //
 //----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -139,8 +86,8 @@ std::string ExpandUserAndMakeAbs(const std::string &path) noexcept;
 /// @brief
 ///   Changes the extension of a path string.
 std::string ChangeExtension(
-	const std::string &path, 
-	const std::string &newExt) noexcept;
+    const std::string &path,
+    const std::string &newExt) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -172,15 +119,12 @@ bool HasExtension(const std::string &path) noexcept;
 //----------------------------------------------------------------------------//
 // C# System.Environment Like API                                             //
 //----------------------------------------------------------------------------//
+std::string NewLine() noexcept;
+
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Gets the fully qualified path of the current working directory.
 std::string CurrentDirectory() noexcept;
-
-///-----------------------------------------------------------------------------
-/// @brief
-///   Gets the newline string defined for this environment.
-std::string NewLine() noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -229,7 +173,8 @@ std::string Basename(const std::string &path) noexcept;
 ///   Given a list of pathnames, returns the longest common leading component.
 /// @param paths
 ///   The paths that will be tested.
-std::string CommonPrefix(const std::initializer_list<std::string> &paths) noexcept;
+std::string CommonPrefix(
+    const std::initializer_list<std::string> &paths) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -257,9 +202,6 @@ bool Exists(const std::string &path) noexcept;
 ///   The path with with the ~ and ~user constructs expanded
 ///   or the unmodified path if it cannot be expanded.
 std::string ExpandUser(const std::string &path) noexcept;
-
-//COWTODO: Check if we gonna implement this.
-//expandvars(const std::string &path)
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -316,7 +258,7 @@ bool IsFile(const std::string &path) noexcept;
 /// @param path
 ///   The path that will be tested.
 /// @note
-///    This will always return false for Windows prior to 6.0.
+///   This will always return false for Windows prior to 6.0.
 /// @warning NOT IMPLEMENTED YET!
 bool IsLink(const std::string &path) noexcept;
 
@@ -329,14 +271,12 @@ bool IsLink(const std::string &path) noexcept;
 /// @warning NOT IMPLEMENTED YET!
 bool IsMount(const std::string &path) noexcept;
 
-
-//COWTODO(n2omatt): Add a variadic template overload for Join.
-
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Join two (or more) paths.
 /// @param paths
 ///   A list of paths that will be joined.
+//COWTODO(n2omatt): Add a variadic template overload for Join.
 std::string Join(const std::vector<std::string> &paths) noexcept;
 
 ///-----------------------------------------------------------------------------
@@ -370,8 +310,8 @@ bool LExists(const std::string &path) noexcept;
 /// @param forceForwardSlashes
 ///   On Windows makes the path use the '/' instead of '\'
 std::string NormCase(
-	const std::string &path, 
-	bool forceForwardSlashes = false) noexcept;
+    const std::string &path,
+    bool forceForwardSlashes = false) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -381,8 +321,8 @@ std::string NormCase(
 /// @param forceForwardSlashes
 ///   On Windows makes the path use the '/' instead of '\'
 std::string NormPath(
-	const std::string &path, 
-	bool forceForwardSlashes = false) noexcept;
+    const std::string &path,
+    bool forceForwardSlashes = false) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -392,21 +332,15 @@ std::string NormPath(
 /// @param start
 ///   The start point to map the relative path.
 std::string RelPath(
-	const std::string &path, 
-	const std::string &start = ".") noexcept;
+    const std::string &path,
+    const std::string &start = ".") noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Test whether two pathnames reference the same actual file
 bool SameFile(
-	const std::string &filename1, 
-	const std::string &filename2) noexcept;
-
-//COWNOTE: Not implemented
-//sameopenfile(fp1, fp2)
-
-//COWNOTE: Not implemented
-//samestat(s1, s2)
+     const std::string &filename1,
+     const std::string &filename2) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -427,9 +361,6 @@ std::pair<std::string, std::string> Split(const std::string &path) noexcept;
 ///   A vector with all path components.
 std::vector<std::string> SplitAll(const std::string &path) noexcept;
 
-//COWNOTE: Not implemented
-//splitdrive(p)
-
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Split the extension from a pathname.
@@ -441,7 +372,6 @@ std::vector<std::string> SplitAll(const std::string &path) noexcept;
 ///   "(root, ext)"; ext may be empty.
 std::pair<std::string, std::string> SplitExt(const std::string &path) noexcept;
 
-//COWNOTE: Not implemented.
-//splitunc(p)
-
-NS_COREFS_END
+} // namespace Path
+} // namespace IO
+} // namespace acow

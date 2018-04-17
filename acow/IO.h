@@ -7,7 +7,7 @@
 //                    |   _   ||     |_ |       ||   _   |                    //
 //                    |__| |__||_______||_______||__| |__|                    //
 //                             www.amazingcow.com                             //
-//  File      : CoreFS_Utils.h                                                //
+//  File      : CoreFS.h                                                      //
 //  Project   : CoreFS                                                        //
 //  Date      : Aug 01, 2017                                                  //
 //  License   : GPLv3                                                         //
@@ -15,31 +15,15 @@
 //  Copyright : AmazingCow - 2017                                             //
 //                                                                            //
 //  Description :                                                             //
-//    Utilities used by all other files in project.                           //
+//                                                                            //
 //---------------------------------------------------------------------------~//
 
 #pragma once
 
 //----------------------------------------------------------------------------//
-// Namespaces                                                                 //
+// Export Headers                                                             //
 //----------------------------------------------------------------------------//
-// All classes of this core is placed inside this namespace.
-// We use MACROS so is easier to change if needed.
-// Is (in our opinion) more explicit.
-// And finally the editors will not reformat the code.
-#define NS_COREFS_BEGIN namespace CoreFS {
-#define NS_COREFS_END   }
-#define USING_NS_COREFS using namespace CoreFS
-
-
-//----------------------------------------------------------------------------//
-// Version                                                                    //
-//----------------------------------------------------------------------------//
-#define COW_COREFS_VERSION_MAJOR    "0"
-#define COW_COREFS_VERSION_MINOR    "1"
-#define COW_COREFS_VERSION_REVISION "0"
-
-#define COW_COREFS_VERSION       \
-    COW_COREFS_VERSION_MAJOR "." \
-    COW_COREFS_VERSION_MINOR "." \
-    COW_COREFS_VERSION_REVISION
+#include "include/Dir.h"
+#include "include/File.h"
+#include "include/Path.h"
+#include "include/SpecialFolder.h"
