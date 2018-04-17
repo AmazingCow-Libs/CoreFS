@@ -8,7 +8,7 @@
 ##                    |__| |__||_______||_______||__| |__|                    ##
 ##                             www.amazingcow.com                             ##
 ##  File      : CMakeLists.txt                                                ##
-##  Project   : CoreFS                                                        ##
+##  Project   : acow_cpp_goodies                                              ##
 ##  Date      : Feb 19, 2018                                                  ##
 ##  License   : GPLv3                                                         ##
 ##  Author    : n2omatt <n2omatt@amazingcow.com>                              ##
@@ -20,25 +20,44 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-##------------------------------------------------------------------------------
-## Project Settings.
-project(CoreFile)
+
+##----------------------------------------------------------------------------##
+## Project                                                                    ##
+##----------------------------------------------------------------------------##
+set(PROJECT acow_IO)
+project(${PROJECT})
 
 
+##----------------------------------------------------------------------------##
+## Sources                                                                    ##
+##----------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------
-## Sources.
-add_library(CoreFS
-    CoreFS/src/CoreFS.cpp
-    CoreFS/src/private/win32_functions.cpp
-    CoreFS/src/private/unix_functions.cpp
+## Sources
+set(SOURCES         
+    acow/src/Dir.cpp 
+    acow/src/private/Dir/gnu_linux_functions.cpp
+    acow/src/private/Dir/win32_functions.cpp
+
+    acow/src/File.cpp
+    
+    acow/src/Path.cpp
+    acow/src/private/Path/unix_functions.cpp
+    acow/src/private/Path/win32_functions.cpp
 )
 
 
+##----------------------------------------------------------------------------##
+## Library                                                                    ##
+##----------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------
-## Include directories.
-target_include_directories(CoreFS PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+## Lib.
+add_library(${PROJECT} ${SOURCES})
 
+##-----------------------------------------------------------------------------
+## Include directories.
+target_include_directories(${PROJECT} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 ##------------------------------------------------------------------------------
 ## Dependencies.
-target_link_libraries(CoreFS LINK_PUBLIC acow_cpp_goodies)
+target_link_libraries(${PROJECT} LINK_PUBLIC acow_c_goodies)
+target_link_libraries(${PROJECT} LINK_PUBLIC acow_cpp_goodies)
